@@ -21,13 +21,23 @@ void shutdownFlexActionsModule();
  * Flex lexeme processing actions.
  */
 
-void BeginMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
-void EndMultilineCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+void BeginCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+void EndCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
-Token ArithmeticOperatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+
 Token IntegerLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token ParenthesisLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+
+
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
