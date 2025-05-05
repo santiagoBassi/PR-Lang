@@ -61,7 +61,7 @@
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 
 /*[[:alpha:]][[:alnum:]]*             { return IdLexemeAction(createLexicalAnalyzerContext()); }*/
-([^[:digit:]\n \(\)])([^\n \(\)])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
+([^[:digit:]\n \(\),])([^\n \(\),])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
