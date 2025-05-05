@@ -61,7 +61,7 @@
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 [[:alpha:]][[:alnum:]]*             { return ParameterLexemeAction(createLexicalAnalyzerContext()); }
 
-([[:^digit:]]{-}[\)\("\.[:^graph:]])([[:graph:]]{-}[\)\("\.[:^graph:]])*            { return FunctionNameLexemeAction(createLexicalAnalyzerContext()); }
+([[:^digit:]]{-}[\)\([:^graph:]])([[:graph:]]{-}[\)\([:^graph:]])*            { return FunctionNameLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
