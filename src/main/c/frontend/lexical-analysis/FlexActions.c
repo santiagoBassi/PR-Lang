@@ -107,13 +107,6 @@ Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	return EQUALS;
 }
 
-Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
-	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
-	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
-	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return FILNAME;
-}
 
 Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);

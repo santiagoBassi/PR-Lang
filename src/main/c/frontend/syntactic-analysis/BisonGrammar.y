@@ -37,7 +37,6 @@
 /** Terminals. */
 %token <integer> INTEGER
 %token <token> DEF
-%token <token> INCLUDE
 %token <token> COLON
 %token <token> ARROW
 %token <token> INPUT
@@ -47,7 +46,6 @@
 %token <token> EQUALS
 %token <token> NEW_LINE
 %token <string> FUNCTION
-%token <string> FILENAME
 %token <string> PARAMETER
 
 %token <token> UNKNOWN

@@ -32,7 +32,6 @@ Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token
 Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
 Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
-Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 

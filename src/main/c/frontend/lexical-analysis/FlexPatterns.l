@@ -15,6 +15,7 @@
  * @see https://westes.github.io/flex/manual/Start-Conditions.html
  */
 %x COMMENT
+%x INCLUDE_FILE
 
 /**
  * Reusable patterns.
@@ -34,7 +35,6 @@
 "def"                               { return KeywordLexemeAction(createLexicalAnalyzerContext(), DEF); }
 "("									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_PARENTHESIS); }
 ")"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_PARENTHESIS); }
-"#include"                          { return KeywordLexemeAction(createLexicalAnalyzerContext(), INCLUDE); }
 ":"                                 { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), COLON); }
 "->"                                { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), ARROW); }
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
@@ -42,8 +42,23 @@
 "input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT); }
 "\n"                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
+"#include"                          { BEGIN(INCLUDE_FILE); }
+<INCLUDE_FILE> [[:alnum:]]+\.rp     { 
+                                        LexicalAnalyzerContext * lexicalAnalyzerContext = createLexicalAnalyzerContext();
+                                        yyin = fopen(lexicalAnalyzerContext->lexeme, "r");
+										yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
+										destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
+                                        BEGIN(INITIAL);
+                                    }
+<INCLUDE_FILE> .					{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+<<EOF>>                             {
+                                        yypop_buffer_state();
+                                        if (!YY_CURRENT_BUFFER) {
+											yyterminate();
+										}
+                                    }
+
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
-[[:alnum:]]+\.rp                    { return FileNameLexemeAction(createLexicalAnalyzerContext()); }
 [[:alpha:]][[:alnum:]]*             { return ParameterLexemeAction(createLexicalAnalyzerContext()); }
 
 ([[:^digit:]]{-}["\.[:^graph:]])([[:graph:]]{-}["\.[:^graph:]])*            { return FunctionNameLexemeAction(createLexicalAnalyzerContext()); }
