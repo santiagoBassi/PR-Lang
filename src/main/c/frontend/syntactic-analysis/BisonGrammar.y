@@ -12,6 +12,7 @@
 
 	int integer;
 	Token token;
+    char* string;
 
 	/** Non-terminals. */
 
@@ -35,12 +36,19 @@
 
 /** Terminals. */
 %token <integer> INTEGER
-%token <token> ADD
-%token <token> CLOSE_PARENTHESIS
-%token <token> DIV
-%token <token> MUL
+%token <token> DEF
+%token <token> INCLUDE
+%token <token> COLON
+%token <token> ARROW
+%token <token> INPUT
 %token <token> OPEN_PARENTHESIS
-%token <token> SUB
+%token <token> CLOSE_PARENTHESIS
+%token <token> COMMA_SEPARATOR
+%token <token> EQUALS
+%token <token> NEW_LINE
+%token <string> FUNCTION
+%token <string> FILENAME
+%token <string> PARAMETER
 
 %token <token> UNKNOWN
 

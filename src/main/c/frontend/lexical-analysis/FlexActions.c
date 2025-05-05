@@ -71,11 +71,12 @@ Token ParenthesisLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, T
 	return token;
 }
 
-Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
+	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return FUNCTION;
 }
 
 Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
@@ -85,11 +86,11 @@ Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token
 	return token;
 }
 
-Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->token = COMMA_SEPARATOR;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return COMMA_SEPARATOR;
 }
 
 Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
@@ -99,34 +100,35 @@ Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerCont
 	return token;
 }
 
-Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->token = EQUALS;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return EQUALS;
 }
 
-Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
+	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return FILNAME;
 }
 
-Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
+	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return PARAMETER;
 }
 
-Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
+Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->token = token;
+	lexicalAnalyzerContext->semanticValue->token = NEW_LINE;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return token;
+	return NEW_LINE;
 }
-
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext) {
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);

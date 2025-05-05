@@ -26,32 +26,30 @@
 %%
 
 
-"//"				                { BEGIN(COMMENT); }
-<COMMENT>"\n"				        { BEGIN(INITIAL); }
-<COMMENT>.				            {}
+"//"				                { BEGIN(COMMENT); BeginCommentLexemeAction(createLexicalAnalyzerContext()); }
+<COMMENT>"\n"				        { BEGIN(INITIAL); EndCommentLexemeAction(createLexicalAnalyzerContext()); }
+<COMMENT>.				            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 
-"def"                               {}
-"("									{}
-")"									{}
-"#include"                          {}
-":"                                 {}
-"->"                                {}
-"="                                 {}
-","                                 {}
-"input"                             {}
-"suc"                               {}
-"\n"                                {}
+"def"                               { return KeywordLexemeAction(createLexicalAnalyzerContext(), DEF); }
+"("									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), OPEN_PARENTHESIS); }
+")"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_PARENTHESIS); }
+"#include"                          { return KeywordLexemeAction(createLexicalAnalyzerContext(), INCLUDE); }
+":"                                 { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), COLON); }
+"->"                                { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), ARROW); }
+"="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
+","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
+"input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT); }
+"\n"                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
-[[:digit:]]+						{}
-[[:alnum:]]+\.rp                    {}
-[[:alpha:]][[:alnum:]]*             {}
+[[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
+[[:alnum:]]+\.rp                    { return FileNameLexemeAction(createLexicalAnalyzerContext()); }
+[[:alpha:]][[:alnum:]]*             { return ParameterLexemeAction(createLexicalAnalyzerContext()); }
 
-([[:^digit:]]{-}["\.[:^graph:]])([[:graph:]]{-}["\.[:^graph:]])*            {}
+([[:^digit:]]{-}["\.[:^graph:]])([[:graph:]]{-}["\.[:^graph:]])*            { return FunctionNameLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
-
 
 %%
 

@@ -25,19 +25,16 @@ void BeginCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 void EndCommentLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
-
 Token IntegerLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token ParenthesisLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
+Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-
-
+Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token FileNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
