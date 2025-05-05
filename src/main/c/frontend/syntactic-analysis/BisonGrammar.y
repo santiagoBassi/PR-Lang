@@ -45,8 +45,7 @@
 %token <token> COMMA_SEPARATOR
 %token <token> EQUALS
 %token <token> NEW_LINE
-%token <string> FUNCTION
-%token <string> PARAMETER
+%token <string> ID
 
 %token <token> UNKNOWN
 

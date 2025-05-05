@@ -27,12 +27,11 @@ void IgnoredLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
 Token IntegerLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token ParenthesisLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
-Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
 Token CommaSeparatorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token FunctionDecoratorLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token);
 Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
-Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
+Token IdLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);
 
 Token UnknownLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext);

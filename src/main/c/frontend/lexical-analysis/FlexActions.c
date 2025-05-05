@@ -71,12 +71,12 @@ Token ParenthesisLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, T
 	return token;
 }
 
-Token FunctionNameLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
+Token IdLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
 	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
 	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return FUNCTION;
+	return ID;
 }
 
 Token KeywordLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext, Token token){
@@ -105,15 +105,6 @@ Token EqualsLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
 	lexicalAnalyzerContext->semanticValue->token = EQUALS;
 	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
 	return EQUALS;
-}
-
-
-Token ParameterLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
-	_logLexicalAnalyzerContext(__FUNCTION__, lexicalAnalyzerContext);
-	lexicalAnalyzerContext->semanticValue->string = calloc(1 + lexicalAnalyzerContext->length, sizeof(char));
-	strncpy(lexicalAnalyzerContext->semanticValue->string, lexicalAnalyzerContext->lexeme, lexicalAnalyzerContext->length);
-	destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
-	return PARAMETER;
 }
 
 Token NewLineLexemeAction(LexicalAnalyzerContext * lexicalAnalyzerContext){
