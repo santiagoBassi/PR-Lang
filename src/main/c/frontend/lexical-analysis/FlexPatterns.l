@@ -43,14 +43,14 @@
 "\n"                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
 "#include"                          { BEGIN(INCLUDE_FILE); }
-<INCLUDE_FILE> [[:alnum:]]+\.rp     { 
+<INCLUDE_FILE>[[:alnum:]]+\.rp      { 
                                         LexicalAnalyzerContext * lexicalAnalyzerContext = createLexicalAnalyzerContext();
                                         yyin = fopen(lexicalAnalyzerContext->lexeme, "r");
 										yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
 										destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
                                         BEGIN(INITIAL);
                                     }
-<INCLUDE_FILE> .					{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
+<INCLUDE_FILE>.					    { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 <<EOF>>                             {
                                         yypop_buffer_state();
                                         if (!YY_CURRENT_BUFFER) {
@@ -61,7 +61,7 @@
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 
 /*[[:alpha:]][[:alnum:]]*             { return IdLexemeAction(createLexicalAnalyzerContext()); }*/
-([^[:digit:]\n \(\),])([^\n \(\),])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
+([^[:digit:][:blank:]\(\),])([^[:blank:]\(\),])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }

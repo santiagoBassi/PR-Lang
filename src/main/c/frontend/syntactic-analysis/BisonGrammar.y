@@ -15,11 +15,26 @@
     char* string;
 
 	/** Non-terminals. */
-
-	Constant * constant;
-	Expression * expression;
-	Factor * factor;
-	Program * program;
+	Program* program;
+    Statements* statements;
+    Statement* statement;
+    Definition* definition;
+    FunctionArgs* function_args;
+    DefinitionBody* definition_body;
+    CompositionDef* composition_def;
+    RecursiveDef* recursive_def;
+    BaseCase* base_case;
+    NextCase* next_case;
+    
+    Expression* expression;
+    FunctionExpression* function_expression;
+    ExpressionArgs* expression_args;
+    ExpressionFactor* expression_factor;
+    
+    Evaluation* evaluation;
+    FunctionEvaluation* function_evaluation;
+    EvaluationArgs* evaluation_args;
+    EvaluationFactor* evaluation_factor;
 }
 
 /**
@@ -30,9 +45,23 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Destructor-Decl.html
  */
-%destructor { releaseConstant($$); } <constant>
+%destructor { releaseStatements($$); } <statements>
+%destructor { releaseStatement($$); } <statement>
+%destructor { releaseFunctionArgs($$); } <function_args>
+%destructor { releaseDefinition($$); } <definition>
+%destructor { releaseDefinitionBody($$); } <definition_body>
 %destructor { releaseExpression($$); } <expression>
-%destructor { releaseFactor($$); } <factor>
+%destructor { releaseFunctionExpression($$); } <function_expression>
+%destructor { releaseExpressionFactor($$); } <expression_factor>
+%destructor { releaseExpressionArgs($$); } <expression_args>
+%destructor { releaseCompositionDef($$); } <composition_def>
+%destructor { releaseRecursiveDef($$); } <recursive_def>
+%destructor { releaseBaseCase($$); } <base_case>
+%destructor { releaseNextCase($$); } <next_case>
+%destructor { releaseEvaluation($$); } <evaluation>
+%destructor { releaseFunctionEvaluation($$); } <function_evaluation>
+%destructor { releaseEvaluationFactor($$); } <evaluation_factor>
+%destructor { releaseEvaluationArgs($$); } <evaluation_args>
 
 /** Terminals. */
 %token <integer> INTEGER
@@ -50,10 +79,26 @@
 %token <token> UNKNOWN
 
 /** Non-terminals. */
-%type <constant> constant
-%type <expression> expression
-%type <factor> factor
 %type <program> program
+%type <statements> statements
+%type <statement> statement
+%type <definition> definition
+%type <function_args> function_args
+%type <definition_body> definition_body
+%type <composition_def> composition_def
+%type <recursive_def> recursive_def
+%type <base_case> base_case
+%type <next_case> next_case
+
+%type <expression> expression
+%type <function_expression> function_expression
+%type <expression_args> expression_args
+%type <expression_factor> expression_factor
+
+%type <evaluation> evaluation
+%type <function_evaluation> function_evaluation
+%type <evaluation_args> evaluation_args
+%type <evaluation_factor> evaluation_factor
 
 /**
  * Precedence and associativity.
@@ -67,21 +112,72 @@
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: expression													{ $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
+program: statements								    { $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
-expression: expression[left] ADD expression[right]					{ $$ = ArithmeticExpressionSemanticAction($left, $right, ADDITION); }
-	| expression[left] DIV expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, DIVISION); }
-	| expression[left] MUL expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, MULTIPLICATION); }
-	| expression[left] SUB expression[right]						{ $$ = ArithmeticExpressionSemanticAction($left, $right, SUBTRACTION); }
-	| factor														{ $$ = FactorExpressionSemanticAction($1); }
-	;
+statements: statement NEW_LINE statements
+          | statement
+          ;
 
-factor: OPEN_PARENTHESIS expression CLOSE_PARENTHESIS				{ $$ = ExpressionFactorSemanticAction($2); }
-	| constant														{ $$ = ConstantFactorSemanticAction($1); }
-	;
+statement: definition
+         | evaluation
+         ;
 
-constant: INTEGER													{ $$ = IntegerConstantSemanticAction($1); }
-	;
+definition: DEF ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS COLON NEW_LINE definition_body
+          | DEF ID OPEN_PARENTHESIS CLOSE_PARENTHESIS COLON NEW_LINE composition_def
+          ;
 
+definition_body: composition_def
+               | recursive_def
+               ;
+
+composition_def: ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression
+               | ARROW ID OPEN_PARENTHESIS CLOSE_PARENTHESIS EQUALS expression
+               ;
+
+recursive_def: base_case NEW_LINE next_case;
+
+base_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR INTEGER CLOSE_PARENTHESIS EQUALS expression
+         | ARROW ID OPEN_PARENTHESIS INTEGER CLOSE_PARENTHESIS EQUALS expression
+         ;
+
+next_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR ID ID INTEGER CLOSE_PARENTHESIS EQUALS expression
+         | ARROW ID OPEN_PARENTHESIS ID ID INTEGER CLOSE_PARENTHESIS EQUALS expression
+         ;
+
+expression: function_expression
+          | expression_factor
+          ;
+
+function_expression: ID OPEN_PARENTHESIS expression_args CLOSE_PARENTHESIS
+                   | ID OPEN_PARENTHESIS CLOSE_PARENTHESIS
+                   ;
+
+expression_args: expression COMMA_SEPARATOR expression_args
+               | expression
+               ;
+
+expression_factor: ID
+                 | INTEGER
+                 ;
+
+function_args: ID COMMA_SEPARATOR function_args
+             | ID
+             ;
+
+evaluation: function_evaluation
+          | evaluation_factor
+          ;
+
+function_evaluation: ID OPEN_PARENTHESIS evaluation_args CLOSE_PARENTHESIS
+                   | ID OPEN_PARENTHESIS CLOSE_PARENTHESIS 
+                   ;
+
+evaluation_args: evaluation COMMA_SEPARATOR evaluation_args
+               | evaluation
+               ;
+
+evaluation_factor: INTEGER
+                 | INPUT
+                 ;
 %%
