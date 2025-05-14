@@ -58,6 +58,10 @@
 %destructor { releaseRecursiveDef($$); } <recursive_def>
 %destructor { releaseBaseCase($$); } <base_case>
 %destructor { releaseNextCase($$); } <next_case>
+%destructor { releaseExpression($$); } <evaluation>
+%destructor { releaseFunctionExpression($$); } <function_evaluation>
+%destructor { releaseExpressionFactor($$); } <evaluation_factor>
+%destructor { releaseExpressionArgs($$); } <evaluation_args>
 
 /** Terminals. */
 %token <integer> INTEGER
