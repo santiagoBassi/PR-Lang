@@ -29,12 +29,12 @@
     Expression* expression;
     FunctionExpression* function_expression;
     ExpressionArgs* expression_args;
-    ExpressionFactor* expression_factor;
+    Factor* expression_factor;
     
-    Evaluation* evaluation;
-    FunctionEvaluation* function_evaluation;
-    EvaluationArgs* evaluation_args;
-    EvaluationFactor* evaluation_factor;
+    Expression* evaluation;
+    FunctionExpression* function_evaluation;
+    ExpressionArgs* evaluation_args;
+    Factor* evaluation_factor;
 }
 
 /**
@@ -58,10 +58,6 @@
 %destructor { releaseRecursiveDef($$); } <recursive_def>
 %destructor { releaseBaseCase($$); } <base_case>
 %destructor { releaseNextCase($$); } <next_case>
-%destructor { releaseEvaluation($$); } <evaluation>
-%destructor { releaseFunctionEvaluation($$); } <function_evaluation>
-%destructor { releaseEvaluationFactor($$); } <evaluation_factor>
-%destructor { releaseEvaluationArgs($$); } <evaluation_args>
 
 /** Terminals. */
 %token <integer> INTEGER

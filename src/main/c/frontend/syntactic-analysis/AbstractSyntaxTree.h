@@ -19,11 +19,6 @@ typedef struct Statements Statements;
 typedef struct Statement Statement;
 typedef struct Definition Definition;
 
-typedef struct Evaluation Evaluation;
-typedef struct FunctionEvaluation FunctionEvaluation;
-typedef struct EvaluationFactor EvaluationFactor;
-typedef struct EvaluationArgs EvaluationArgs;
-
 typedef struct FunctionArgs FunctionArgs;
 
 typedef struct DefinitionBody DefinitionBody;
@@ -35,7 +30,7 @@ typedef struct NextCase NextCase;
 
 typedef struct Expression Expression;
 typedef struct FunctionExpression FunctionExpression;
-typedef struct ExpressionFactor ExpressionFactor;
+typedef struct Factor Factor;
 typedef struct ExpressionArgs ExpressionArgs;
 
 typedef enum {
@@ -80,7 +75,7 @@ struct Statements {
 struct Statement {
     union {
         Definition* definition;
-        Evaluation* evaluation;
+        Expression* evaluation;
     };
     StatementType type;
 };
@@ -122,7 +117,7 @@ struct CompositionDef {
 struct Expression {
     union {
         FunctionExpression* functionExpression;
-        ExpressionFactor* expressionFactor;
+        Factor* factor;
     };
 
     TermType type;
@@ -130,7 +125,7 @@ struct Expression {
 
 struct FunctionExpression {
     char* fun;
-    ExpressionArgs* expressionArgs;
+    ExpressionArgs* args;
 };
 
 struct ExpressionFactor {
@@ -172,34 +167,6 @@ struct NextCase {
     Expression* expression;
 };
 
-struct Evaluation {
-    union {
-        FunctionEvaluation* functionEvaluation;
-        EvaluationFactor* evaluationFactor;
-    };
-
-    TermType type;
-};
-
-struct FunctionEvaluation {
-    char* fun;
-    EvaluationArgs* evaluationArgs;
-};
-
-struct EvaluationFactor {
-    union {
-        char* var;
-        int num;
-    };
-
-    FactorType type;
-};
-
-struct EvaluationArgs {
-    Evaluation* evaluation;
-    EvaluationArgs* evaluationArgs;
-};
-
 /**
  * Node recursive destructors.
  */
@@ -214,17 +181,12 @@ void releaseDefintionBody(DefinitionBody* definitionBody);
 
 void releaseExpression(Expression * expression);
 void releaseFunctionExpression(FunctionExpression* functionExpression);
-void releaseExpressionFactor(ExpressionFactor* expressionFactor);
+void releaseExpressionFactor(Factor* expressionFactor);
 void releaseExpressionArgs(ExpressionArgs* expressionArgs);
 
 void releaseCompositionDef(CompositionDef * def);
 void releaseRecursiveDef(RecursiveDef * def);
 void releaseBaseCase(BaseCase * baseCase);
 void releaseNextCase(NextCase * nextCase);
-
-void releaseEvaluation(Evaluation * evaluation);
-void releaseFunctionEvaluation(FunctionEvaluation * functionEvaluation);
-void releaseEvaluationFactor(EvaluationFactor * evaluationFactor);
-void releaseEvaluationArgs(EvaluationArgs * evaluationArgs);
 
 #endif
