@@ -29,14 +29,14 @@ typedef struct FunctionArgs FunctionArgs;
 typedef struct DefinitionBody DefinitionBody;
 typedef struct CompositionDef CompositionDef;
 
+typedef struct RecursiveDef RecursiveDef;
+typedef struct BaseCase BaseCase;
+typedef struct NextCase NextCase;
+
 typedef struct Expression Expression;
 typedef struct FunctionExpression FunctionExpression;
 typedef struct ExpressionFactor ExpressionFactor;
 typedef struct ExpressionArgs ExpressionArgs;
-typedef struct RecursiveDef RecursiveDef;
-
-typedef struct BaseCase BaseCase;
-typedef struct NextCase NextCase;
 
 typedef enum {
     DEFINITION,
