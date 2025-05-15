@@ -1,4 +1,6 @@
 #include "BisonActions.h"
+#include "AbstractSyntaxTree.h"
+#include <cstdio>
 
 /* MODULE INTERNAL STATE */
 
@@ -30,58 +32,56 @@ static void _logSyntacticAnalyzerAction(const char * functionName) {
 }
 
 /* PUBLIC FUNCTIONS */
-
-Constant * IntegerConstantSemanticAction(const int value) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Constant * constant = calloc(1, sizeof(Constant));
-	constant->value = value;
-	return constant;
+DefinitionBody* CompositionDefBodySemanticAction(CompositionDef *def) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    DefinitionBody* body = calloc(1, sizeof(DefinitionBody));
+    body->type = COMPOSITION;
+    body->compositionDef = def;
+    return body;
 }
 
-Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->leftExpression = leftExpression;
-	expression->rightExpression = rightExpression;
-	expression->type = type;
-	return expression;
+DefinitionBody* RecursiveDefBodySemanticAction(RecursiveDef *def) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    DefinitionBody* body = calloc(1, sizeof(DefinitionBody));
+    body->type = RECURSIVE;
+    body->recursiveDef = def;
+    return body;
 }
 
-Expression * FactorExpressionSemanticAction(Factor * factor) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Expression * expression = calloc(1, sizeof(Expression));
-	expression->factor = factor;
-	expression->type = FACTOR;
-	return expression;
+CompositionDef* CompositionDefSemanticAction(const char *fun, FunctionArgs *args, Expression *expression) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    CompositionDef* def = calloc(1, sizeof(CompositionDef));
+    def->fun = fun;
+    def->args = args;
+    def->expression = expression;
+    return def;
 }
 
-Factor * ConstantFactorSemanticAction(Constant * constant) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->constant = constant;
-	factor->type = CONSTANT;
-	return factor;
+RecursiveDef* RecursiveDefSemanticAction(BaseCase *baseCase, NextCase *nextCase) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    RecursiveDef* def = calloc(1, sizeof(RecursiveDef));
+    def->baseCase = baseCase;
+    def->nextCase = nextCase;
+    return def;
 }
 
-Factor * ExpressionFactorSemanticAction(Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Factor * factor = calloc(1, sizeof(Factor));
-	factor->expression = expression;
-	factor->type = EXPRESSION;
-	return factor;
+BaseCase* BaseCaseSemanticAction(const char *fun, FunctionArgs *args, const int zero, Expression *expression) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    BaseCase* baseCase = calloc(1, sizeof(BaseCase));
+    baseCase->fun = fun;
+    baseCase->args = args;
+    baseCase->zero = zero;
+    baseCase->expression = expression;
+    return baseCase;
 }
 
-Program * ExpressionProgramSemanticAction(CompilerState * compilerState, Expression * expression) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Program * program = calloc(1, sizeof(Program));
-	program->expression = expression;
-	compilerState->abstractSyntaxtTree = program;
-	if (0 < flexCurrentContext()) {
-		logError(_logger, "The final context is not the default (0): %d", flexCurrentContext());
-		compilerState->succeed = false;
-	}
-	else {
-		compilerState->succeed = true;
-	}
-	return program;
+NextCase* NextCaseSemanticAction(const char *fun, FunctionArgs *args, const char *plus, const int one, Expression *expression) {
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    NextCase* nextCase = calloc(1, sizeof(NextCase));
+    nextCase->fun = fun;
+    nextCase->args = args;
+    nextCase->plus = plus;
+    nextCase->one = one;
+    nextCase->expression = expression;
+    return nextCase;
 }

@@ -109,7 +109,7 @@ struct DefinitionBody {
 };
 
 struct CompositionDef {
-    char* fun;
+    const char* fun;
     FunctionArgs* args;
     Expression* expression;
 };
@@ -128,7 +128,7 @@ struct FunctionExpression {
     ExpressionArgs* args;
 };
 
-struct ExpressionFactor {
+struct Factor {
     union {
         char* var;
         int num;
@@ -148,7 +148,7 @@ struct RecursiveDef {
 };
 
 struct BaseCase {
-    char* fun;
+    const char* fun;
 
     FunctionArgs* args;
     int zero;
@@ -157,11 +157,11 @@ struct BaseCase {
 };
 
 struct NextCase {
-    char* fun;
+    const char* fun;
 
     FunctionArgs* args;
 
-    char* plus;
+    const char* plus;
     int one;
 
     Expression* expression;
@@ -177,11 +177,11 @@ void releaseStatement(Statement * statement);
 void releaseFunctionArgs(FunctionArgs* functionArgs);
 
 void releaseDefinition(Definition * definition);
-void releaseDefintionBody(DefinitionBody* definitionBody);
+void releaseDefinitionBody(DefinitionBody* definitionBody);
 
 void releaseExpression(Expression * expression);
 void releaseFunctionExpression(FunctionExpression* functionExpression);
-void releaseExpressionFactor(Factor* expressionFactor);
+void releaseFactor(Factor* factor);
 void releaseExpressionArgs(ExpressionArgs* expressionArgs);
 
 void releaseCompositionDef(CompositionDef * def);
