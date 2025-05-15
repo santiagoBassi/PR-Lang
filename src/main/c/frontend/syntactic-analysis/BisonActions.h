@@ -41,7 +41,7 @@ DefinitionBody* RecursiveDefBodySemanticAction(RecursiveDef* def);
 DefinitionBody* CompositionDefBodySemanticAction(CompositionDef* def);
 
 // Bass
-Definition* DefinitionNoArgsSemanticAction(const char* fun, FunctionArgs* args, CompositionDef* def);
+Definition* DefinitionNoArgsSemanticAction(const char* fun, CompositionDef* def);
 Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body);
 
 FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args);
@@ -49,6 +49,6 @@ FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args);
 Statement* DefinitionStatementSemanticAction(Definition* definition);
 
 Statements* StatementsSemanticAction(Statements* statements, Statement* statement);
-Program * ProgramSemanticAction(CompilerState * compiler_state, Statements* statements);
+Program * ProgramSemanticAction(CompilerState * compilerState, Statements* statements);
 
 #endif

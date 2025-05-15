@@ -71,10 +71,55 @@ Factor * ExpressionFactorSemanticAction(Expression * expression) {
 	return factor;
 }
 
-Program * ExpressionProgramSemanticAction(CompilerState * compilerState, Expression * expression) {
+Definition* DefinitionNoArgsSemanticAction(const char* fun, CompositionDef* def) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Definition* definition = calloc(1, sizeof(Definition));
+	definition->fun = fun;
+	definition->compositionDef = def;
+	definition->type = NO_ARGUMENTS;
+	
+	return definition;
+}
+
+Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Definition* definition = calloc(1, sizeof(Definition));
+	definition->fun = fun;
+	definition->args = args;
+	definition->definitionBody = body;
+	definition->type = HAS_ARGUMENTS;
+	
+	return definition;
+}
+
+FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	FunctionArgs* functionArgs = calloc(1, sizeof(FunctionArgs));
+	functionArgs->arg = id;
+	functionArgs->args = args;
+	return functionArgs;
+}
+
+Statement* DefinitionStatementSemanticAction(Definition* definition) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Statement* statement = calloc(1, sizeof(Statement));
+	statement->definition = definition;
+	statement->type = DEFINITION;
+	return statement;
+}
+
+Statements* StatementsSemanticAction(Statements* statements, Statement* statement) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	Statements* newStatements = calloc(1, sizeof(Statements));
+	newStatements->statement = statement;
+	newStatements->statements = statements;
+	return statements;
+}
+
+Program * ProgramSemanticAction(CompilerState * compilerState, Statements* statements) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Program * program = calloc(1, sizeof(Program));
-	program->expression = expression;
+	program->statements = statements;
 	compilerState->abstractSyntaxtTree = program;
 	if (0 < flexCurrentContext()) {
 		logError(_logger, "The final context is not the default (0): %d", flexCurrentContext());
