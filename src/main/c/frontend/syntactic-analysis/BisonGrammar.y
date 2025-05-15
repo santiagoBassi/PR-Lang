@@ -112,37 +112,37 @@
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
 
-program: statements								    { $$ = ExpressionProgramSemanticAction(currentCompilerState(), $1); }
+program: statements								    { $$ = ProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
-statements: statement NEW_LINE statements
-          | statement
+statements: statement NEW_LINE statements           { $$ = StatementsSemanticAction($1, $3); }
+          | statement                               { $$ = StatementsSemanticAction($1, NULL); }
           ;
 
-statement: definition
-         | evaluation
+statement: definition                               { $$ = DefinitionStatementSemanticAction($1); }
+         | evaluation                               { $$ = EvaluationStatementSemanticAction($1); }
          ;
 
-definition: DEF ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS COLON NEW_LINE definition_body
-          | DEF ID OPEN_PARENTHESIS CLOSE_PARENTHESIS COLON NEW_LINE composition_def
+definition: DEF ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS COLON NEW_LINE definition_body { $$ = DefinitionSemanticAction($2,$4,$8); }
+          | DEF ID OPEN_PARENTHESIS CLOSE_PARENTHESIS COLON NEW_LINE composition_def               { $$ = DefinitionNoArgsSemanticAction($2,$7); }
           ;
 
-definition_body: composition_def
-               | recursive_def
+definition_body: composition_def { $$ = CompositionDefBodySemanticAction($1); }
+               | recursive_def   { $$ = RecursiveDefBodySemanticAction($1); }
                ;
 
-composition_def: ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression
-               | ARROW ID OPEN_PARENTHESIS CLOSE_PARENTHESIS EQUALS expression
+composition_def: ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression { $$ = CompositionDefSemanticAction($2, $4, $7); }
+               | ARROW ID OPEN_PARENTHESIS CLOSE_PARENTHESIS EQUALS expression               { $$ = CompositionDefSemanticAction($2, NULL, $7); }
                ;
 
-recursive_def: base_case NEW_LINE next_case;
+recursive_def: base_case NEW_LINE next_case { $$ = RecursiveDefSemanticAction($1, $3); }
+             ; 
 
-base_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR INTEGER CLOSE_PARENTHESIS EQUALS expression
-         | ARROW ID OPEN_PARENTHESIS INTEGER CLOSE_PARENTHESIS EQUALS expression
+base_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR INTEGER CLOSE_PARENTHESIS EQUALS expression { $$ = BaseCaseSemanticAction($2, $4, $6, $9); }
+         | ARROW ID OPEN_PARENTHESIS INTEGER CLOSE_PARENTHESIS EQUALS expression                               { $$ = BaseCaseSemanticAction($2, NULL, $4, $7); }
          ;
 
-next_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR ID ID INTEGER CLOSE_PARENTHESIS EQUALS expression
-         | ARROW ID OPEN_PARENTHESIS ID ID INTEGER CLOSE_PARENTHESIS EQUALS expression
+next_case: ARROW ID OPEN_PARENTHESIS function_args ID INTEGER CLOSE_PARENTHESIS EQUALS expression { $$ = NextCaseSemanticAction($2, $4, $5, $6, $9); }
          ;
 
 expression: function_expression
@@ -153,8 +153,8 @@ function_expression: ID OPEN_PARENTHESIS expression_args CLOSE_PARENTHESIS
                    | ID OPEN_PARENTHESIS CLOSE_PARENTHESIS
                    ;
 
-expression_args: expression COMMA_SEPARATOR expression_args
-               | expression
+expression_args: expression COMMA_SEPARATOR expression_args         { $$ = FunctionArgsSemanticAction($1,$3); }
+               | expression                                         { $$ = FunctionArgsSemanticAction($1,NULL); }
                ;
 
 expression_factor: ID

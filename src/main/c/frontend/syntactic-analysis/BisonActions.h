@@ -26,13 +26,13 @@ Factor* IdFactorSemanticAction(const char* id);
 ExpressionArgs* ExpressionArgsSemanticActoin(ExpressionArgs* args, Expression* expression);
 
 Expression* FactorExpressionSemanticAction(Factor* factor);
-Expression* FunctionExpressionSemanticAction(FunctionExpression* function_expression);
+Expression* FunctionExpressionSemanticAction(FunctionExpression* functionExpression);
 
 Statement* EvaluationStatementSemanticAction(Expression* expression);
 
 // Neichdoggy dog
-NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* last_id, const int last_int, Expression* expression);
-BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, const int last, Expression* expression);
+NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* plus, const int one, Expression* expression);
+BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, const int zero, Expression* expression);
 RecursiveDef* RecursiveDefSemanticAction(BaseCase* base_case, NextCase* next_case);
 
 CompositionDef* CompositionDefSemanticAction(const char* fun, FunctionArgs* args, Expression* expression);
