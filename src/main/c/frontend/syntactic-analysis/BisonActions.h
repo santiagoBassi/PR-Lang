@@ -18,6 +18,7 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
+// Gogost
 Factor* IntegerFactorSemanticAction(const int value);
 Factor* InputFactorSemanticAction();
 Factor* IdFactorSemanticAction(const char* id);
@@ -29,6 +30,7 @@ Expression* FunctionExpressionSemanticAction(FunctionExpression* function_expres
 
 Statement* EvaluationStatementSemanticAction(Expression* expression);
 
+// Neichdoggy dog
 NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* last_id, const int last_int, Expression* expression);
 BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, const int last, Expression* expression);
 RecursiveDef* RecursiveDefSemanticAction(BaseCase* base_case, NextCase* next_case);
@@ -38,6 +40,7 @@ CompositionDef* CompositionDefSemanticAction(const char* fun, FunctionArgs* args
 DefinitionBody* RecursiveDefBodySemanticAction(RecursiveDef* def);
 DefinitionBody* CompositionDefBodySemanticAction(CompositionDef* def);
 
+// Bass
 Definition* DefinitionNoArgsSemanticAction(const char* fun, FunctionArgs* args, CompositionDef* def);
 Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body);
 
