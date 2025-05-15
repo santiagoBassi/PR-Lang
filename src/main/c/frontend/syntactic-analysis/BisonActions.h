@@ -23,12 +23,14 @@ Factor* IntegerFactorSemanticAction(const int value);
 Factor* InputFactorSemanticAction();
 Factor* IdFactorSemanticAction(const char* id);
 
-ExpressionArgs* ExpressionArgsSemanticActoin(ExpressionArgs* args, Expression* expression);
+ExpressionArgs* ExpressionArgsSemanticAction(ExpressionArgs* args, Expression* expression);
 
 Expression* FactorExpressionSemanticAction(Factor* factor);
 Expression* FunctionExpressionSemanticAction(FunctionExpression* functionExpression);
 
-Statement* EvaluationStatementSemanticAction(Expression* expression);
+FunctionExpression* FunctionSemanticAction(const char* fun, ExpressionArgs* args);
+
+Statement* ExpressionStatementSemanticAction(Expression* expression);
 
 // Neichdoggy dog
 NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* plus, const int one, Expression* expression);

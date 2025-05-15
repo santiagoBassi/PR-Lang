@@ -35,7 +35,7 @@ typedef struct ExpressionArgs ExpressionArgs;
 
 typedef enum {
     DEFINITION,
-    EVALUATION
+    EXPRESSION
 } StatementType;
 
 typedef enum {
@@ -75,13 +75,13 @@ struct Statements {
 struct Statement {
     union {
         Definition* definition;
-        Expression* evaluation;
+        Expression* expression;
     };
     StatementType type;
 };
 
 struct Definition {
-    char* fun;
+    const char* fun;
 
     union {
         struct {
@@ -95,7 +95,7 @@ struct Definition {
 };
 
 struct FunctionArgs {
-    char* arg;
+    const char* arg;
     FunctionArgs* args;
 };
 
@@ -124,13 +124,13 @@ struct Expression {
 };
 
 struct FunctionExpression {
-    char* fun;
+    const char* fun;
     ExpressionArgs* args;
 };
 
 struct Factor {
     union {
-        char* var;
+        const char* var;
         int num;
     };
 

@@ -60,7 +60,6 @@
 
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 
-/*[[:alpha:]][[:alnum:]]*             { return IdLexemeAction(createLexicalAnalyzerContext()); }*/
 ([^[:digit:][:blank:]\(\),])([^[:blank:]\(\),])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }

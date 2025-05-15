@@ -146,8 +146,8 @@ void releaseStatement(Statement *statement) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
     if (statement != NULL) {
         switch (statement->type) {
-            case EVALUATION: 
-                releaseExpression(statement->evaluation);
+            case EXPRESSION: 
+                releaseExpression(statement->expression);
                 break;
             case DEFINITION:
                 releaseDefinition(statement->definition);

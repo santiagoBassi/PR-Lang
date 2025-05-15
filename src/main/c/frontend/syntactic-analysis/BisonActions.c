@@ -146,3 +146,66 @@ Program * ProgramSemanticAction(CompilerState * compilerState, Statements* state
 	}
 	return program;
 }
+
+Factor* IntegerFactorSemanticAction(const int value){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Factor* factor = calloc(1, sizeof(Factor));
+    factor->num = value;
+    factor->type = NUM;
+    return factor;
+}
+
+Factor* InputFactorSemanticAction(){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Factor* factor = calloc(1, sizeof(Factor));
+    factor->type = INPUT;
+    return factor;
+}
+
+Factor* IdFactorSemanticAction(const char* id){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Factor* factor = calloc(1, sizeof(Factor));
+    factor->var = id;
+    factor->type = VAR;
+    return factor;
+}
+
+ExpressionArgs* ExpressionArgsSemanticAction(ExpressionArgs* args, Expression* expression){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    ExpressionArgs* expressionArgs = calloc(1, sizeof(ExpressionArgs));
+    expressionArgs->expression = expression;
+    expressionArgs->expressionArgs = args;
+    return expressionArgs;
+}
+
+Expression* FactorExpressionSemanticAction(Factor* factor){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Expression* expression = calloc(1, sizeof(Expression));
+    expression->factor = factor;
+    expression->type = FACTOR;
+    return expression;
+}
+
+Expression* FunctionExpressionSemanticAction(FunctionExpression* functionExpression){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Expression* expression = calloc(1, sizeof(Expression));
+    expression->functionExpression = functionExpression;
+    expression->type = FUNCTION;
+    return expression;
+}
+
+FunctionExpression* FunctionSemanticAction(const char* fun, ExpressionArgs* args){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    FunctionExpression* functionExpression = calloc(1, sizeof(FunctionExpression));
+    functionExpression->fun = fun;
+    functionExpression->args = args;
+    return functionExpression;
+}
+
+Statement* ExpressionStatementSemanticAction(Expression* expression){
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+    Statement* statement = calloc(1, sizeof(Statement));
+    statement->expression = expression;
+    statement->type = EXPRESSION;
+    return statement;
+}
