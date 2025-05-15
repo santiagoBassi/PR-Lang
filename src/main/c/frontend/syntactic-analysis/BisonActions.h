@@ -18,11 +18,34 @@ void shutdownBisonActionsModule();
  * Bison semantic actions.
  */
 
-Constant * IntegerConstantSemanticAction(const int value);
-Expression * ArithmeticExpressionSemanticAction(Expression * leftExpression, Expression * rightExpression, ExpressionType type);
-Expression * FactorExpressionSemanticAction(Factor * factor);
-Factor * ConstantFactorSemanticAction(Constant * constant);
-Factor * ExpressionFactorSemanticAction(Expression * expression);
-Program * ExpressionProgramSemanticAction(CompilerState * compilerState, Expression * expression);
+Factor* IntegerFactorSemanticAction(const int value);
+Factor* InputFactorSemanticAction();
+Factor* IdFactorSemanticAction(const char* id);
+
+ExpressionArgs* ExpressionArgsSemanticActoin(ExpressionArgs* args, Expression* expression);
+
+Expression* FactorExpressionSemanticAction(Factor* factor);
+Expression* FunctionExpressionSemanticAction(FunctionExpression* function_expression);
+
+Statement* EvaluationStatementSemanticAction(Expression* expression);
+
+NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* last_id, const int last_int, Expression* expression);
+BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, const int last, Expression* expression);
+RecursiveDef* RecursiveDefSemanticAction(BaseCase* base_case, NextCase* next_case);
+
+CompositionDef* CompositionDefSemanticAction(const char* fun, FunctionArgs* args, Expression* expression);
+
+DefinitionBody* RecursiveDefBodySemanticAction(RecursiveDef* def);
+DefinitionBody* CompositionDefBodySemanticAction(CompositionDef* def);
+
+Definition* DefinitionNoArgsSemanticAction(const char* fun, FunctionArgs* args, CompositionDef* def);
+Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body);
+
+FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args);
+
+Statement* DefinitionStatementSemanticAction(Definition* definition);
+
+Statements* StatementsSemanticAction(Statements* statements, Statement* statement);
+Program * ProgramSemanticAction(CompilerState * compiler_state, Statements* statements);
 
 #endif
