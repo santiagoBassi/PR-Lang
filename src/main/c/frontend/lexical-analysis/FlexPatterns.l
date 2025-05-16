@@ -28,7 +28,7 @@
 
 
 "//"				                { BEGIN(COMMENT); BeginCommentLexemeAction(createLexicalAnalyzerContext()); }
-<COMMENT>"\n"				        { BEGIN(INITIAL); EndCommentLexemeAction(createLexicalAnalyzerContext()); }
+<COMMENT>\r?\n				        { BEGIN(INITIAL); EndCommentLexemeAction(createLexicalAnalyzerContext()); }
 <COMMENT>.				            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 
@@ -40,7 +40,7 @@
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
 ","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 "input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT_FROM_STDIN); }
-"\n"                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
+\r?\n                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
 "#include"                          { BEGIN(INCLUDE_FILE); }
 <INCLUDE_FILE>[[:alnum:]]+\.rp      { 
@@ -60,7 +60,7 @@
 
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 
-([^[:digit:]\n\(\), ])([^\n\(\), ])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
+([^[:digit:]\r\n\(\), ])([^\r\n\(\), ])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }
