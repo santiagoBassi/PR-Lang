@@ -1,6 +1,7 @@
 %{
 
 #include "FlexActions.h"
+#define PATH_MAX 500
 
 %}
 
@@ -41,16 +42,19 @@
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
 ","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 "input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT_FROM_STDIN); }
-\r?\n                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
+\r?\n                               { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
-"#include"                          { BEGIN(INCLUDE_FILE); }
-<INCLUDE_FILE>[[:alnum:]]+\.rp      { 
-                                        LexicalAnalyzerContext * lexicalAnalyzerContext = createLexicalAnalyzerContext();
-                                        yyin = fopen(lexicalAnalyzerContext->lexeme, "r");
+"#include"                           { BEGIN(INCLUDE_FILE); }
+<INCLUDE_FILE>[[:alnum:]_\/\-]+\.rp  { 
+                                        yyin = fopen(yytext, "r");
+                                        if (yyin == NULL) {
+                                            yyterminate();
+                                        }
+
 										yypush_buffer_state(yy_create_buffer(yyin, YY_BUF_SIZE));
-										destroyLexicalAnalyzerContext(lexicalAnalyzerContext);
                                         BEGIN(INITIAL);
                                     }
+<INCLUDE_FILE>[[:space:]]+		    { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 <INCLUDE_FILE>.					    { return UnknownLexemeAction(createLexicalAnalyzerContext()); }
 <<EOF>>                             {
                                         yypop_buffer_state();
