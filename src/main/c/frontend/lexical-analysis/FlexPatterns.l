@@ -39,7 +39,7 @@
 "->"                                { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), ARROW); }
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
 ","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
-"input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT); }
+"input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT_FROM_STDIN); }
 "\n"                                { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
 "#include"                          { BEGIN(INCLUDE_FILE); }
@@ -60,7 +60,7 @@
 
 [[:digit:]]+						{ return IntegerLexemeAction(createLexicalAnalyzerContext()); }
 
-([^[:digit:][:blank:]\(\),])([^[:blank:]\(\),])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
+([^[:digit:]\n\(\), ])([^\n\(\), ])*  { return IdLexemeAction(createLexicalAnalyzerContext()); }
 
 [[:space:]]+						{ IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 .									{ return UnknownLexemeAction(createLexicalAnalyzerContext()); }

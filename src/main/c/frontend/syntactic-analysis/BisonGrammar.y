@@ -46,7 +46,7 @@
 %destructor { releaseDefinitionBody($$); } <definition_body>
 %destructor { releaseExpression($$); } <expression>
 %destructor { releaseFunctionExpression($$); } <function_expression>
-%destructor { releaseExpressionFactor($$); } <expression_factor>
+%destructor { releaseFactor($$); } <expression_factor>
 %destructor { releaseExpressionArgs($$); } <expression_args>
 %destructor { releaseCompositionDef($$); } <composition_def>
 %destructor { releaseRecursiveDef($$); } <recursive_def>
@@ -58,7 +58,7 @@
 %token <token> DEF
 %token <token> COLON
 %token <token> ARROW
-%token <token> INPUT
+%token <token> INPUT_FROM_STDIN
 %token <token> OPEN_PARENTHESIS
 %token <token> CLOSE_PARENTHESIS
 %token <token> COMMA_SEPARATOR
@@ -99,8 +99,9 @@
 program: statements								    { $$ = ProgramSemanticAction(currentCompilerState(), $1); }
 	;
 
-statements: statement NEW_LINE statements           { $$ = StatementsSemanticAction($1, $3); }
-          | statement                               { $$ = StatementsSemanticAction($1, NULL); }
+statements: statement NEW_LINE statements           { $$ = StatementsSemanticAction($3, $1); }
+          | statement NEW_LINE                      { $$ = StatementsSemanticAction(NULL, $1); }
+          | statement                               { $$ = StatementsSemanticAction(NULL, $1); }
           ;
 
 statement: definition                               { $$ = DefinitionStatementSemanticAction($1); }
@@ -133,17 +134,17 @@ expression: function_expression { $$ = FunctionExpressionSemanticAction($1); }
           | expression_factor   { $$ = FactorExpressionSemanticAction($1); }
           ;
 
-function_expression: ID OPEN_PARENTHESIS expression_args CLOSE_PARENTHESIS { $$ = FunctionSemanticAction($1, $3) }
-                   | ID OPEN_PARENTHESIS CLOSE_PARENTHESIS                 { $$ = FunctionSemanticAction($1, NULL) }
+function_expression: ID OPEN_PARENTHESIS expression_args CLOSE_PARENTHESIS { $$ = FunctionSemanticAction($1, $3); }
+                   | ID OPEN_PARENTHESIS CLOSE_PARENTHESIS                 { $$ = FunctionSemanticAction($1, NULL); }
                    ;
 
 expression_args: expression COMMA_SEPARATOR expression_args         { $$ = ExpressionArgsSemanticAction($3, $1); }
                | expression                                         { $$ = ExpressionArgsSemanticAction(NULL, $1); }
                ;
 
-expression_factor: ID      { $$ = IdFactorSemanticAction($1); }
-                 | INTEGER { $$ = IntegerFactorSemanticAction($1); }
-                 | INPUT   { $$ = InputFactorSemanticAction(); }
+expression_factor: ID                { $$ = IdFactorSemanticAction($1); }
+                 | INTEGER           { $$ = IntegerFactorSemanticAction($1); }
+                 | INPUT_FROM_STDIN  { $$ = InputFactorSemanticAction(); }
                  ;
 
 function_args: ID COMMA_SEPARATOR function_args { $$ = FunctionArgsSemanticAction($1, $3); }

@@ -129,7 +129,7 @@ Statements* StatementsSemanticAction(Statements* statements, Statement* statemen
 	Statements* newStatements = calloc(1, sizeof(Statements));
 	newStatements->statement = statement;
 	newStatements->statements = statements;
-	return statements;
+	return newStatements;
 }
 
 Program * ProgramSemanticAction(CompilerState * compilerState, Statements* statements) {
@@ -158,7 +158,7 @@ Factor* IntegerFactorSemanticAction(const int value){
 Factor* InputFactorSemanticAction(){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
     Factor* factor = calloc(1, sizeof(Factor));
-    factor->type = INPUT;
+    factor->type = INPUT_TYPE;
     return factor;
 }
 

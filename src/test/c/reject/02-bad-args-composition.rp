@@ -1,0 +1,2 @@
+def pow2(x y):
+-> pow2(x) = *(x, x)

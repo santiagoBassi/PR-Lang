@@ -56,7 +56,7 @@ typedef enum {
 typedef enum {
     VAR,
     NUM,
-    INPUT
+    INPUT_TYPE
 } FactorType;
 
 /**

@@ -20,7 +20,7 @@ void releaseFactor(Factor *factor) {
     if (factor != NULL) {
         switch (factor->type) {
             case VAR:
-                free(factor->var);
+                free((void*)factor->var);
                 break;
             default:
                 break;
@@ -42,7 +42,7 @@ void releaseFunctionExpression(FunctionExpression *functionExpression) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
     if (functionExpression != NULL) {
         releaseExpressionArgs(functionExpression->args);
-        free(functionExpression->fun);
+        free((void*)functionExpression->fun);
         free(functionExpression);
     }
 }
@@ -67,8 +67,8 @@ void releaseNextCase(NextCase *nextCase) {
     if (nextCase != NULL) {
         releaseExpression(nextCase->expression);
         releaseFunctionArgs(nextCase->args);
-        free(nextCase->plus);
-        free(nextCase->fun);
+        free((void*)nextCase->plus);
+        free((void*)nextCase->fun);
         free(nextCase);
     }
 }
@@ -78,7 +78,7 @@ void releaseBaseCase(BaseCase *baseCase) {
     if (baseCase != NULL) {
         releaseExpression(baseCase->expression);
         releaseFunctionArgs(baseCase->args);
-        free(baseCase->fun);
+        free((void*)baseCase->fun);
         free(baseCase);
     }
 }
@@ -97,7 +97,7 @@ void releaseCompositionDef(CompositionDef *def) {
     if (def != NULL) {
         releaseFunctionArgs(def->args);
         releaseExpression(def->expression);
-        free(def->fun);
+        free((void*)def->fun);
         free(def);
     }
 }
@@ -122,7 +122,7 @@ void releaseFunctionArgs(FunctionArgs *functionArgs) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
     if (functionArgs != NULL) {
         releaseFunctionArgs(functionArgs->args);
-        free(functionArgs->arg);
+        free((void*)functionArgs->arg);
         free(functionArgs);
     }
 }
@@ -137,7 +137,7 @@ void releaseDefinition(Definition *definition) {
             releaseCompositionDef(definition->compositionDef);
         }
 
-        free(definition->fun);
+        free((void*)definition->fun);
         free(definition);
     }
 }
