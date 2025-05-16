@@ -37,6 +37,7 @@
 ")"									{ return ParenthesisLexemeAction(createLexicalAnalyzerContext(), CLOSE_PARENTHESIS); }
 ":"                                 { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), COLON); }
 "->"                                { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), ARROW); }
+"=>"                                { return FunctionDecoratorLexemeAction(createLexicalAnalyzerContext(), DOUBLE_ARROW); }
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
 ","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 "input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT_FROM_STDIN); }

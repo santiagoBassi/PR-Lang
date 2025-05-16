@@ -34,7 +34,7 @@ Statement* ExpressionStatementSemanticAction(Expression* expression);
 
 // Neichdoggy dog
 NextCase* NextCaseSemanticAction(const char* fun, FunctionArgs* args, const char* plus, const int one, Expression* expression);
-BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, const int zero, Expression* expression);
+BaseCase* BaseCaseSemanticAction(const char* fun, FunctionArgs* args, Expression* expression);
 RecursiveDef* RecursiveDefSemanticAction(BaseCase* base_case, NextCase* next_case);
 
 CompositionDef* CompositionDefSemanticAction(const char* fun, FunctionArgs* args, Expression* expression);
@@ -47,6 +47,7 @@ Definition* DefinitionNoArgsSemanticAction(const char* fun, CompositionDef* def)
 Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body);
 
 FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args);
+FunctionArgs* FunctionArgsIntSemanticAction(int num);
 
 Statement* DefinitionStatementSemanticAction(Definition* definition);
 

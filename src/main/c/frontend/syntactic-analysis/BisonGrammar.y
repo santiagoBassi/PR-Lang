@@ -58,6 +58,7 @@
 %token <token> DEF
 %token <token> COLON
 %token <token> ARROW
+%token <token> DOUBLE_ARROW
 %token <token> INPUT_FROM_STDIN
 %token <token> OPEN_PARENTHESIS
 %token <token> CLOSE_PARENTHESIS
@@ -89,8 +90,6 @@
  *
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
-%left ADD SUB
-%left MUL DIV
 
 %%
 
@@ -116,15 +115,14 @@ definition_body: composition_def { $$ = CompositionDefBodySemanticAction($1); }
                | recursive_def   { $$ = RecursiveDefBodySemanticAction($1); }
                ;
 
-composition_def: ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression { $$ = CompositionDefSemanticAction($2, $4, $7); }
-               | ARROW ID OPEN_PARENTHESIS CLOSE_PARENTHESIS EQUALS expression               { $$ = CompositionDefSemanticAction($2, NULL, $6); }
+composition_def: DOUBLE_ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression { $$ = CompositionDefSemanticAction($2, $4, $7); }
+               | DOUBLE_ARROW ID OPEN_PARENTHESIS CLOSE_PARENTHESIS EQUALS expression               { $$ = CompositionDefSemanticAction($2, NULL, $6); }
                ;
 
 recursive_def: base_case NEW_LINE next_case { $$ = RecursiveDefSemanticAction($1, $3); }
              ; 
 
-base_case: ARROW ID OPEN_PARENTHESIS function_args COMMA_SEPARATOR INTEGER CLOSE_PARENTHESIS EQUALS expression { $$ = BaseCaseSemanticAction($2, $4, $6, $9); }
-         | ARROW ID OPEN_PARENTHESIS INTEGER CLOSE_PARENTHESIS EQUALS expression                               { $$ = BaseCaseSemanticAction($2, NULL, $4, $7); }
+base_case: ARROW ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS EQUALS expression { $$ = BaseCaseSemanticAction($2, $4, $7); }
          ;
 
 next_case: ARROW ID OPEN_PARENTHESIS function_args ID INTEGER CLOSE_PARENTHESIS EQUALS expression { $$ = NextCaseSemanticAction($2, $4, $5, $6, $9); }
@@ -149,5 +147,6 @@ expression_factor: ID                { $$ = IdFactorSemanticAction($1); }
 
 function_args: ID COMMA_SEPARATOR function_args { $$ = FunctionArgsSemanticAction($1, $3); }
              | ID                               { $$ = FunctionArgsSemanticAction($1, NULL); }
+             | INTEGER                          { $$ = FunctionArgsIntSemanticAction($1); }
              ;
 %%

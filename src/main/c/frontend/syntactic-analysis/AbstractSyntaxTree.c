@@ -121,8 +121,10 @@ void releaseDefinitionBody(DefinitionBody *definitionBody) {
 void releaseFunctionArgs(FunctionArgs *functionArgs) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
     if (functionArgs != NULL) {
-        releaseFunctionArgs(functionArgs->args);
-        free((void*)functionArgs->arg);
+        if (functionArgs->type == VAR_ARG) {
+            releaseFunctionArgs(functionArgs->args);
+            free((void*)functionArgs->arg);
+        }
         free(functionArgs);
     }
 }

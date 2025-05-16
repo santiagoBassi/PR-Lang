@@ -65,12 +65,11 @@ RecursiveDef* RecursiveDefSemanticAction(BaseCase *baseCase, NextCase *nextCase)
     return def;
 }
 
-BaseCase* BaseCaseSemanticAction(const char *fun, FunctionArgs *args, const int zero, Expression *expression) {
+BaseCase* BaseCaseSemanticAction(const char *fun, FunctionArgs *args, Expression *expression) {
     _logSyntacticAnalyzerAction(__FUNCTION__);
     BaseCase* baseCase = calloc(1, sizeof(BaseCase));
     baseCase->fun = fun;
     baseCase->args = args;
-    baseCase->zero = zero;
     baseCase->expression = expression;
     return baseCase;
 }
@@ -111,8 +110,17 @@ Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, Defini
 FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	FunctionArgs* functionArgs = calloc(1, sizeof(FunctionArgs));
+    functionArgs->type = VAR_ARG;
 	functionArgs->arg = id;
 	functionArgs->args = args;
+	return functionArgs;
+}
+
+FunctionArgs* FunctionArgsIntSemanticAction(int num) {
+	_logSyntacticAnalyzerAction(__FUNCTION__);
+	FunctionArgs* functionArgs = calloc(1, sizeof(FunctionArgs));
+    functionArgs->type = NUM_ARG;
+	functionArgs->num = num;
 	return functionArgs;
 }
 

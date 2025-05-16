@@ -59,6 +59,11 @@ typedef enum {
     INPUT_TYPE
 } FactorType;
 
+typedef enum {
+    VAR_ARG,
+    NUM_ARG
+} FunctionArgsType;
+
 /**
  * Node types for the Abstract Syntax Tree (AST).
  */
@@ -95,7 +100,11 @@ struct Definition {
 };
 
 struct FunctionArgs {
-    const char* arg;
+    union {
+        const char* arg;
+        int num;
+    };
+    FunctionArgsType type;
     FunctionArgs* args;
 };
 
@@ -149,10 +158,7 @@ struct RecursiveDef {
 
 struct BaseCase {
     const char* fun;
-
     FunctionArgs* args;
-    int zero;
-
     Expression* expression;
 };
 
