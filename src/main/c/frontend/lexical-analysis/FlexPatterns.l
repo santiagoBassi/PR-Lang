@@ -29,7 +29,7 @@
 
 
 "//"				                { BEGIN(COMMENT); BeginCommentLexemeAction(createLexicalAnalyzerContext()); }
-<COMMENT>\r?\n				        { BEGIN(INITIAL); EndCommentLexemeAction(createLexicalAnalyzerContext()); }
+<COMMENT>(\r?\n)+				    { BEGIN(INITIAL); EndCommentLexemeAction(createLexicalAnalyzerContext()); }
 <COMMENT>.				            { IgnoredLexemeAction(createLexicalAnalyzerContext()); }
 
 
@@ -42,7 +42,7 @@
 "="                                 { return EqualsLexemeAction(createLexicalAnalyzerContext()); }
 ","                                 { return CommaSeparatorLexemeAction(createLexicalAnalyzerContext()); }
 "input"                             { return KeywordLexemeAction(createLexicalAnalyzerContext(), INPUT_FROM_STDIN); }
-\r?\n                               { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
+(\r?\n)+                            { return NewLineLexemeAction(createLexicalAnalyzerContext()); }
 
 "#include"                           { BEGIN(INCLUDE_FILE); }
 <INCLUDE_FILE>[[:alnum:]_\/\-]+\.rp  { 

@@ -100,6 +100,7 @@ program: statements								    { $$ = ProgramSemanticAction(currentCompilerState
 
 statements: statement NEW_LINE statements           { $$ = StatementsSemanticAction($3, $1); }
           | statement NEW_LINE                      { $$ = StatementsSemanticAction(NULL, $1); }
+          | NEW_LINE statements                     { $$ = $2; }
           | statement                               { $$ = StatementsSemanticAction(NULL, $1); }
           ;
 
