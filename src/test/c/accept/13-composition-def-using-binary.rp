@@ -1,0 +1,2 @@
+def pow3(x):
+=> pow3(x) = (x * (x * x))
