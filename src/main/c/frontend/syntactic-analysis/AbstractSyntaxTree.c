@@ -47,6 +47,16 @@ void releaseFunctionExpression(FunctionExpression *functionExpression) {
     }
 }
 
+void releaseBinaryExpression(BinaryExpression* binaryExpression) {
+    logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
+    if (binaryExpression != NULL) {
+        releaseExpression(binaryExpression->left);
+        releaseExpression(binaryExpression->right);
+        free((void*)binaryExpression->op);
+        free(binaryExpression);
+    }
+}
+
 void releaseExpression(Expression *expression) {
 	logDebugging(_logger, "Executing destructor: %s", __FUNCTION__);
     if (expression != NULL) {
@@ -56,6 +66,9 @@ void releaseExpression(Expression *expression) {
                 break;
             case FUNCTION:
                 releaseFunctionExpression(expression->functionExpression);
+                break;
+            case BINARY:
+                releaseBinaryExpression(expression->binaryExpression);
                 break;
         }
         free(expression);

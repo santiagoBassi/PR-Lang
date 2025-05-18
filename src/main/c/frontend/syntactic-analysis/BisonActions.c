@@ -202,12 +202,29 @@ Expression* FunctionExpressionSemanticAction(FunctionExpression* functionExpress
     return expression;
 }
 
+Expression* BinaryExpressionSemanticAction(BinaryExpression* binaryExpression){
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    Expression* expression = calloc(1, sizeof(Expression));
+    expression->binaryExpression = binaryExpression;
+    expression->type = BINARY;
+    return expression;
+}
+
 FunctionExpression* FunctionSemanticAction(const char* fun, ExpressionArgs* args){
 	_logSyntacticAnalyzerAction(__FUNCTION__);
     FunctionExpression* functionExpression = calloc(1, sizeof(FunctionExpression));
     functionExpression->fun = fun;
     functionExpression->args = args;
     return functionExpression;
+}
+
+BinaryExpression* BinaryExpressionBodySemanticAction(const char* fun, Expression* leftExpression, Expression* rightExpression){
+    _logSyntacticAnalyzerAction(__FUNCTION__);
+    BinaryExpression* binaryExpression = calloc(1, sizeof(BinaryExpression));
+    binaryExpression->op = fun;
+    binaryExpression->left = leftExpression;
+    binaryExpression->right = rightExpression;
+    return binaryExpression;
 }
 
 Statement* ExpressionStatementSemanticAction(Expression* expression){

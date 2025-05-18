@@ -30,6 +30,7 @@ typedef struct NextCase NextCase;
 
 typedef struct Expression Expression;
 typedef struct FunctionExpression FunctionExpression;
+typedef struct BinaryExpression BinaryExpression;
 typedef struct Factor Factor;
 typedef struct ExpressionArgs ExpressionArgs;
 
@@ -50,7 +51,8 @@ typedef enum {
 
 typedef enum {
     FACTOR,
-    FUNCTION
+    FUNCTION,
+    BINARY
 } TermType;
 
 typedef enum {
@@ -127,6 +129,7 @@ struct Expression {
     union {
         FunctionExpression* functionExpression;
         Factor* factor;
+        BinaryExpression* binaryExpression;
     };
 
     TermType type;
@@ -135,6 +138,12 @@ struct Expression {
 struct FunctionExpression {
     const char* fun;
     ExpressionArgs* args;
+};
+
+struct BinaryExpression {
+    Expression* left;
+    Expression* right;
+    const char* op;
 };
 
 struct Factor {
@@ -189,6 +198,7 @@ void releaseExpression(Expression * expression);
 void releaseFunctionExpression(FunctionExpression* functionExpression);
 void releaseFactor(Factor* factor);
 void releaseExpressionArgs(ExpressionArgs* expressionArgs);
+void releaseBinaryExpression(BinaryExpression* binaryExpression);
 
 void releaseCompositionDef(CompositionDef * def);
 void releaseRecursiveDef(RecursiveDef * def);

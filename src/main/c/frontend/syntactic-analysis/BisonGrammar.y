@@ -29,6 +29,7 @@
     FunctionExpression* function_expression;
     ExpressionArgs* expression_args;
     Factor* expression_factor;
+    BinaryExpression* binary_expression;
 }
 
 /**
@@ -48,6 +49,7 @@
 %destructor { releaseFunctionExpression($$); } <function_expression>
 %destructor { releaseFactor($$); } <expression_factor>
 %destructor { releaseExpressionArgs($$); } <expression_args>
+%destructor { releaseBinaryExpression($$); } <binary_expression>
 %destructor { releaseCompositionDef($$); } <composition_def>
 %destructor { releaseRecursiveDef($$); } <recursive_def>
 %destructor { releaseBaseCase($$); } <base_case>
@@ -84,6 +86,7 @@
 %type <function_expression> function_expression
 %type <expression_args> expression_args
 %type <expression_factor> expression_factor
+%type <binary_expression> binary_expression
 
 /**
  * Precedence and associativity.
@@ -131,6 +134,7 @@ next_case: ARROW ID OPEN_PARENTHESIS function_args ID INTEGER CLOSE_PARENTHESIS 
 
 expression: function_expression { $$ = FunctionExpressionSemanticAction($1); }
           | expression_factor   { $$ = FactorExpressionSemanticAction($1); }
+          | binary_expression   { $$ = BinaryExpressionSemanticAction($1); }
           ;
 
 function_expression: ID OPEN_PARENTHESIS expression_args CLOSE_PARENTHESIS { $$ = FunctionSemanticAction($1, $3); }
@@ -145,6 +149,9 @@ expression_factor: ID                { $$ = IdFactorSemanticAction($1); }
                  | INTEGER           { $$ = IntegerFactorSemanticAction($1); }
                  | INPUT_FROM_STDIN  { $$ = InputFactorSemanticAction(); }
                  ;
+
+binary_expression: OPEN_PARENTHESIS expression ID expression CLOSE_PARENTHESIS { $$ = BinaryExpressionBodySemanticAction($3, $2, $4); }
+                ;
 
 function_args: ID COMMA_SEPARATOR function_args { $$ = FunctionArgsSemanticAction($1, $3); }
              | ID                               { $$ = FunctionArgsSemanticAction($1, NULL); }

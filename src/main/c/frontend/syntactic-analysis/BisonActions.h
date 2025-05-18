@@ -27,8 +27,11 @@ ExpressionArgs* ExpressionArgsSemanticAction(ExpressionArgs* args, Expression* e
 
 Expression* FactorExpressionSemanticAction(Factor* factor);
 Expression* FunctionExpressionSemanticAction(FunctionExpression* functionExpression);
+Expression* BinaryExpressionSemanticAction(BinaryExpression* binaryExpression);
 
 FunctionExpression* FunctionSemanticAction(const char* fun, ExpressionArgs* args);
+
+BinaryExpression* BinaryExpressionBodySemanticAction(const char* fun, Expression* leftExpression, Expression* rightExpression); 
 
 Statement* ExpressionStatementSemanticAction(Expression* expression);
 
