@@ -143,7 +143,7 @@ struct FunctionExpression {
 struct BinaryExpression {
     Expression* left;
     Expression* right;
-    const char* op;
+    const char* fun;
 };
 
 struct Factor {

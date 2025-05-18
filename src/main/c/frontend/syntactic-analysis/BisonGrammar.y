@@ -94,6 +94,8 @@
  * @see https://www.gnu.org/software/bison/manual/html_node/Precedence.html
  */
 
+%left ID
+
 %%
 
 // IMPORTANT: To use λ in the following grammar, use the %empty symbol.
@@ -150,8 +152,10 @@ expression_factor: ID                { $$ = IdFactorSemanticAction($1); }
                  | INPUT_FROM_STDIN  { $$ = InputFactorSemanticAction(); }
                  ;
 
-binary_expression: OPEN_PARENTHESIS expression ID expression CLOSE_PARENTHESIS { $$ = BinaryExpressionBodySemanticAction($3, $2, $4); }
+binary_expression: OPEN_PARENTHESIS expression ID expression CLOSE_PARENTHESIS  { $$ = BinaryExpressionBodySemanticAction($3, $2, $4); }
+                | expression ID expression                                      { $$ = BinaryExpressionBodySemanticAction($2, $1, $3); }
                 ;
+
 
 function_args: ID COMMA_SEPARATOR function_args { $$ = FunctionArgsSemanticAction($1, $3); }
              | ID                               { $$ = FunctionArgsSemanticAction($1, NULL); }

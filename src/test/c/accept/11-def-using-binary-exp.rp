@@ -1,0 +1,7 @@
+def superFun(n):
+-> superFun(0) = 1
+-> superFun(n + 1) = (suc(n) * superFun(n))
+
+
+
+superFun(4 + 8)

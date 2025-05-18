@@ -52,7 +52,7 @@ void releaseBinaryExpression(BinaryExpression* binaryExpression) {
     if (binaryExpression != NULL) {
         releaseExpression(binaryExpression->left);
         releaseExpression(binaryExpression->right);
-        free((void*)binaryExpression->op);
+        free((void*)binaryExpression->fun);
         free(binaryExpression);
     }
 }

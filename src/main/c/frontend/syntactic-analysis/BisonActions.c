@@ -221,7 +221,7 @@ FunctionExpression* FunctionSemanticAction(const char* fun, ExpressionArgs* args
 BinaryExpression* BinaryExpressionBodySemanticAction(const char* fun, Expression* leftExpression, Expression* rightExpression){
     _logSyntacticAnalyzerAction(__FUNCTION__);
     BinaryExpression* binaryExpression = calloc(1, sizeof(BinaryExpression));
-    binaryExpression->op = fun;
+    binaryExpression->fun = fun;
     binaryExpression->left = leftExpression;
     binaryExpression->right = rightExpression;
     return binaryExpression;
