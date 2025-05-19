@@ -4,10 +4,13 @@
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
 #include "frontend/syntactic-analysis/SyntacticAnalyzer.h"
+#include "frontend/syntactic-analysis/ASTPrinter.h"
 #include "shared/CompilerState.h"
 #include "shared/Environment.h"
 #include "shared/Logger.h"
 #include "shared/String.h"
+#include <stdio.h>
+#include <string.h>
 
 /**
  * The main entry-point of the entire application. If you use "strtok" to
@@ -47,6 +50,11 @@ const int main(const int count, const char ** arguments) {
 		logError(logger, "The syntactic-analysis phase rejects the input program.");
 		compilationStatus = FAILED;
 	}
+
+    if (strcmp(getStringOrDefault("PRINT_AST", "NO"), "YES") == 0) {
+        printProgram(program);
+    }
+
 	logDebugging(logger, "Releasing AST resources...");
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");

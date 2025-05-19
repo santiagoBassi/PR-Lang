@@ -65,6 +65,7 @@ add_executable(Compiler
 	src/main/c/frontend/syntactic-analysis/BisonActions.c
 	src/main/c/frontend/syntactic-analysis/BisonParser.c
 	src/main/c/frontend/syntactic-analysis/SyntacticAnalyzer.c
+    src/main/c/frontend/syntactic-analysis/ASTPrinter.c
 	src/main/c/shared/Environment.c
 	src/main/c/shared/Logger.c
 	src/main/c/shared/String.c
