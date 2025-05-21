@@ -19,3 +19,7 @@ Set the following environment variables to control and configure the behaviour o
 |`LOG_IGNORED_LEXEMES`|`true`|When `true`, logs all of the ignored lexemes found with Flex at DEBUGGING level. To remove those logs from the console output set it to `false`.|
 |`LOGGING_LEVEL`|`INFORMATION`|The minimum level to log in the console output. From lower to higher, the available levels are: `ALL`, `DEBUGGING`, `INFORMATION`, `WARNING`, `ERROR` and `CRITICAL`.|
 |`PRINT_AST`|`YES`|When `YES` prints the generated AST. A few intermidiate nodes don't print anything.|
+
+## Syntax Highlighting
+
+If you are using VSCode you can install the RP-Lang extension to enable syntax highlighting. In the `syntax-highlighting` folder you will find the `.vsix` file. In VSCode go to `Extensions > More options (dots) > Install from VSIX` and select the extension file.
