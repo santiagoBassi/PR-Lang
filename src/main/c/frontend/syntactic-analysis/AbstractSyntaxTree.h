@@ -14,6 +14,8 @@ void shutdownAbstractSyntaxTreeModule();
  * This typedefs allows self-referencing types.
  */
 
+// AGUSTITO
+
 typedef struct Program Program;
 typedef struct Statements Statements;
 typedef struct Statement Statement;
@@ -23,6 +25,8 @@ typedef struct FunctionArgs FunctionArgs;
 
 typedef struct DefinitionBody DefinitionBody;
 typedef struct CompositionDef CompositionDef;
+
+// NACHOSITO
 
 typedef struct RecursiveDef RecursiveDef;
 typedef struct BaseCase BaseCase;

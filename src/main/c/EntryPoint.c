@@ -42,6 +42,7 @@ const int main(const int count, const char ** arguments) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
         logInformation(logger, "The syntactic-analysis phase accepts the input program.");
+		// Generate symbol table and code
         compilationStatus = SUCCEED; 
 		// ...end of the Backend. -----------------------------------------------------------------
 		// ----------------------------------------------------------------------------------------
