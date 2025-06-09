@@ -3,12 +3,16 @@
 #define FUNCTION_TABLE_H
 
 #include "ArgumentList.h"
+#include <stdint.h>
+#include "HashMap.h"
+#include <stdio.h>
+#include <ctype.h>
 
 typedef struct FunctionTable * FunctionTableType;
 
 FunctionTableType createFunctionTable();
 
-void insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList);
+int insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList);
 
 int containsFunction(FunctionTableType functionTable, const char * functionName);
 
