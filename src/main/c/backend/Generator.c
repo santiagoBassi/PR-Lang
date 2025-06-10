@@ -195,6 +195,13 @@ int _generateFactorInDefinition(Factor* factor, ArgumentListType argsList) {
     }
 }
 
+int _getExpressionArgsLen(ExpressionArgs* expressionArgs) {
+    if (expressionArgs == NULL)
+        return 0;
+
+    return 1 + _getExpressionArgsLen(expressionArgs->expressionArgs);
+}
+
 int _generateFunctionExpression(FunctionExpression* expression) {
     if (expression == NULL || functionTable == NULL) {
         return false;
@@ -202,6 +209,11 @@ int _generateFunctionExpression(FunctionExpression* expression) {
 
     if (!containsFunction(functionTable, expression->fun)) {
         logError(_logger, "Error in expression: function %s is not defined", expression->fun);
+        return false;
+    }
+
+    if (_getExpressionArgsLen(expression->args) != getArgumentCount(functionTable, expression->fun)) {
+        logError(_logger, "Error in arguments: wrong argument count passed to function");
         return false;
     }
 
@@ -222,6 +234,11 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, Argu
         return false;
     }
 
+    if (_getExpressionArgsLen(expression->args) != getSize(argsList)) {
+        logError(_logger, "Error in arguments: wrong argument count passed to function");
+        return false;
+    }
+
     _output("%s(", expression->fun);
     int expressionArgsStatus = _generateExpressionArgsInDefinition(expression->args, argsList);
     _output(")");
@@ -229,7 +246,7 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, Argu
 }
 
 int _generateExpressionArgs(ExpressionArgs* expressionArgs) {
-    if (expressionArgs == NULL) {
+    if (expressionArgs == NULL || functionTable == NULL) {
         return false;
     }
 

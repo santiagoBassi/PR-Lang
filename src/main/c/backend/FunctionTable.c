@@ -32,11 +32,6 @@ uint64_t _hashFunctionTableRow(const void *item, uint64_t seed0, uint64_t seed1)
     return hashmap_sip(row->functionName, strlen(row->functionName), seed0, seed1);
 }
 
-
-
-
-
-
 FunctionTableType createFunctionTable() {
     FunctionTableType functionTable = malloc(sizeof(struct FunctionTable));
     if (functionTable == NULL) return NULL;
