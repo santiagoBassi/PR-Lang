@@ -61,7 +61,7 @@ El objetivo principal del proyecto es proporcionar una herramienta que permita e
 
 \subsection {Dominio}
 
-Desarrollar un lenguaje que permita definir funciones recursivas primitivas (RP). Las funciones RP son de la forma $f:\mathbb N^k\to\mathbb N$. Las mismas cumplen que están definidas en base a los esquemas recursivos de tipo I y tipo II y composición a partir de las funciones iniciales:
+Desarrollar un lenguaje que permita definir funciones recursivas primitivas (RP). Las funciones RP son de la forma $f:\mathbb N^k\to\mathbb N$ (Zahnd, 2022). Las mismas cumplen que están definidas en base a los esquemas recursivos de tipo I y tipo II y composición a partir de las funciones iniciales:
 \begin{itemize}
 \item $suc:\mathbb N \to \mathbb N, suc(x) = x + 1$
 \item $const_k:\mathbb N \to \mathbb N, const_k(x) = k$
@@ -79,16 +79,91 @@ El lenguaje permite evaluar cualquier función RP que se haya definido. Haciendo
 
 \subsection {Lenguaje}
 
+Un programa de \rplang{} (extensión recomendada $\texttt{.rp}$), está compuesto por definiciones, evaluaciones e $\texttt{\#include}$. Los mismos puede aparecer intercalados en cualquier orden, mientras se cumpla que no se utilicen funciones no definidas en una definición. A continuación se listan construcciones del lenguaje:
 
+\begin{itemize}
+\item Se pueden definir funciones partiendo de las funciones básicas.
+\item Se pueden definir funciones mediante composición de funciones.
+\item Se pueden definir funciones mediante esquemas recursivos de tipo I y II.
+\item Se pueden evaluar funciones utilizando constantes o entradas por teclado.
+\item Se pueden importar funciones desde otros archivos.
+\item Las funciones binarias se pueden evaluar mediante la syntaxis: $(\texttt{expr1}\ \texttt{func}\ \texttt{expr2})$ donde $f:\mathbb N^2\to\mathbb N$.
+\item Se pueden incluir comentarios en el código.
+\end{itemize}
+
+Las funciones pueden definirse mediante expresiones compuestas o mediante esquemas recursivos. A continuación se muestran ejemplos representativos de cada caso.
+
+\paragraph{Composición}
+
+\begin{verbatim}
+#include times.rp
+
+def pow3(x):
+=> pow3(x) = (x * (x * x))
+
+//this will prompt the user for input
+pow3(input)
+\end{verbatim}
+
+\paragraph{Recursión (esquema tipo I)}
+
+\begin{verbatim}
+#include times.rp
+
+def !(n):
+-> !(0) = 1
+-> !(n + 1) = *(suc(n), !(n))
+
+!(4)
+\end{verbatim}
+
+\paragraph{Recursión (esquema tipo II)}
+
+\begin{verbatim}
+#include times.rp
+
+def ^(x, y):
+-> ^(x, 0) = 1
+-> ^(x, y + 1) = *(x, ^(x, y))
+
+(2 ^ 5)
+\end{verbatim}
 
 \section {Implementación}
+
 \subsection {Frontend}
+
+Para la implementación del frontend se utilizaron las herramientas:
+\begin{itemize}
+\item Flex para el análisis léxico.
+\item Bison para el análisis sintáctico.
+\end{itemize}
+
+Durante esta etapa, el lenguaje sufrió leves modificaciones con respecto a su diseño original con el fin de resolver ambigüedades presentes en la gramática y facilitar el análisis sintáctico.
+
+El frontend incorpora diversas validaciones estructurales. Sin embargo, otras validaciones semánticas más específicas, como correcta cantidad de argumentos, orden correcto de argumentos, entre otros, se delegan al backend del compilador para una mayor flexibilidad y separación de responsabilidades.
+
+Como resultado de esta fase, se genera un árbol de sintaxis abstracta (AST) que representa la estructura lógica del programa y sirve como base para las etapas posteriores del proceso de compilación.
+
 \subsection {Backend}
+
+El backend toma el AST generado por el frontend del compilador y genera código en el lenguaje C. El código de salida se produce en una sola pasada por el AST, el recorrido recursivo del árbol se asiste de una tabla de funciones que contiene información pertinente a cada función, tales como argumentos, cantidad de argumentos y nombre de la función.
+
+La tabla de funciones utiliza un hashmap que utiliza como clave el nombre de la función y como valor una estructura que tiene información relevante a la función. Se utilizó la implementación de hashmap de X. Como nuestro lenguaje permite que los nombres de las funciones sean no alfanúmericas, la tabla de funciones tiene que tener un mapeo entre el nombre de la función en nuestro lenguaje y en el código C.
+
 \subsection {Dificultades encontradas}
 
 \section {Futuras Extensiones}
+
 \section {Conclusiones}
+
 \section {Referencias}
+
 \section {Bibliografía}
+
+A continuación, se enumeran las fuentes consultadas para la elaboración de este trabajo.
+\begin {itemize}
+\item \href{https://github.com/mzahnd/apuntes-9335-logica-computacional}{Zahnd, M. (2022). GitHub - mzahnd/apuntes-9335-logica-computacional: Apuntes de la materia Lógica Computacional (93.35) del ITBA. GitHub.}
+\end {itemize}
 
 \end{document}
