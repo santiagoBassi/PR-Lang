@@ -42,7 +42,6 @@ CompositionDef* CompositionDefSemanticAction(const char* fun, FunctionArgs* args
 DefinitionBody* RecursiveDefBodySemanticAction(RecursiveDef* def);
 DefinitionBody* CompositionDefBodySemanticAction(CompositionDef* def);
 
-Definition* DefinitionNoArgsSemanticAction(const char* fun, CompositionDef* def);
 Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body);
 
 FunctionArgs* FunctionArgsSemanticAction(const char* id, FunctionArgs* args);

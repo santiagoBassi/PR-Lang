@@ -9,13 +9,13 @@ typedef struct ArgumentList * ArgumentListType;
 
 ArgumentListType createArgumentList();
 
-void insertArgumentList(ArgumentListType argumentList, const char * argument);
+void insertArgument(ArgumentListType argumentList, const char * argument);
 
 const char* lastArgument(ArgumentListType argumentList);
 
 const char* nextArgument(ArgumentListType argumentList);
 
-int hasNextArgumentList(ArgumentListType argumentList);
+int hasNextArgument(ArgumentListType argumentList);
 
 void resetArgumentList(ArgumentListType argumentList);
 

@@ -147,10 +147,8 @@ void releaseDefinition(Definition *definition) {
     if (definition != NULL) {
         if (definition->args != NULL) {
             releaseFunctionArgs(definition->args);
-            releaseDefinitionBody(definition->definitionBody);
-        } else {
-            releaseCompositionDef(definition->compositionDef);
         }
+        releaseDefinitionBody(definition->definitionBody);        
 
         free((void*)definition->fun);
         free(definition);

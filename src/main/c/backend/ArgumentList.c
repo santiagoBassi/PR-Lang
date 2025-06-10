@@ -21,7 +21,7 @@ ArgumentListType createArgumentList() {
     return argumentList;
 }
 
-void insertArgumentList(ArgumentListType argumentList, const char * argument) {
+void insertArgument(ArgumentListType argumentList, const char * argument) {
     if (argumentList == NULL || argument == NULL) return;
 
     Argument * newArgument = calloc(1, sizeof(Argument));

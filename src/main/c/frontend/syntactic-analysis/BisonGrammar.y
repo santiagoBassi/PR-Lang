@@ -114,7 +114,7 @@ statement: definition                               { $$ = DefinitionStatementSe
          ;
 
 definition: DEF ID OPEN_PARENTHESIS function_args CLOSE_PARENTHESIS COLON NEW_LINE definition_body { $$ = DefinitionSemanticAction($2,$4,$8); }
-          | DEF ID OPEN_PARENTHESIS CLOSE_PARENTHESIS COLON NEW_LINE composition_def               { $$ = DefinitionNoArgsSemanticAction($2,$7); }
+          | DEF ID OPEN_PARENTHESIS CLOSE_PARENTHESIS COLON NEW_LINE definition_body               { $$ = DefinitionSemanticAction($2,NULL,$7); }
           ;
 
 definition_body: composition_def { $$ = CompositionDefBodySemanticAction($1); }

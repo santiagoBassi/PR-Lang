@@ -85,24 +85,12 @@ NextCase* NextCaseSemanticAction(const char *fun, FunctionArgs *args, const char
     return nextCase;
 }
 
-
-Definition* DefinitionNoArgsSemanticAction(const char* fun, CompositionDef* def) {
-	_logSyntacticAnalyzerAction(__FUNCTION__);
-	Definition* definition = calloc(1, sizeof(Definition));
-	definition->fun = fun;
-	definition->compositionDef = def;
-	definition->type = NO_ARGUMENTS;
-	
-	return definition;
-}
-
 Definition* DefinitionSemanticAction(const char* fun, FunctionArgs* args, DefinitionBody* body) {
 	_logSyntacticAnalyzerAction(__FUNCTION__);
 	Definition* definition = calloc(1, sizeof(Definition));
 	definition->fun = fun;
 	definition->args = args;
 	definition->definitionBody = body;
-	definition->type = HAS_ARGUMENTS;
 	
 	return definition;
 }

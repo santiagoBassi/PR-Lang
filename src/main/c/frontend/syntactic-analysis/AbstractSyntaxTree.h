@@ -49,11 +49,6 @@ typedef enum {
 } DefinitionType;
 
 typedef enum {
-    NO_ARGUMENTS,
-    HAS_ARGUMENTS
-} ArgumentsType;
-
-typedef enum {
     FACTOR,
     FUNCTION,
     BINARY
@@ -93,16 +88,8 @@ struct Statement {
 
 struct Definition {
     const char* fun;
-
-    union {
-        struct {
-            FunctionArgs* args;
-            DefinitionBody* definitionBody;
-        };
-        CompositionDef* compositionDef;
-    };
-
-    ArgumentsType type;
+    FunctionArgs* args;
+    DefinitionBody* definitionBody;
 };
 
 struct FunctionArgs {

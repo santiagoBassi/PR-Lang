@@ -37,15 +37,8 @@ void printStatement(Statement *statement, int indent) {
 void printDefinition(Definition *definition, int indent) {
     printIndent(indent);
     printf("Definition %s:\n", definition->fun);
-    switch (definition->type) {
-        case NO_ARGUMENTS:
-            printCompositionDef(definition->compositionDef, indent + 1);
-            break;
-        default:
-            printFunctionArgs(definition->args, indent + 1);
-            printDefinitionBody(definition->definitionBody, indent + 1);
-            break;
-    }
+    printFunctionArgs(definition->args, indent + 1);
+    printDefinitionBody(definition->definitionBody, indent + 1);
 }
 
 void printFunctionArgs(FunctionArgs *args, int indent) {
