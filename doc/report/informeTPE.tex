@@ -1,0 +1,94 @@
+\documentclass{article}
+\title{\textbf{Trabajo Práctico Especial - \rplang{}} \\ [1ex]
+\large Instituto Tecnológico de Buenos Aires - Autómatas, Teoría de Lenguajes y Compiladores (72.39) \\ [1ex]
+\large Grupo RP-Lang}
+\date{21 de junio de 2025}
+\author{
+\textbf{Ignacio Searles}\\
+isearles@itba.edu.ar\\
+64.536
+\and
+\textbf{Augusto Barthelemy Solá}\\
+abarthelemysola@itba.edu.ar\\
+64.502
+\and
+\textbf{Santiago Bassi}\\
+sabassi@itba.edu.ar\\
+64.643
+}
+
+\usepackage{multicol}
+\usepackage{graphicx, wrapfig}
+\graphicspath{ {imágenes/} }
+
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\usepackage{hyperref}
+
+\usepackage{caption, threeparttable}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\usepackage[margin=1.3in]{geometry}
+\newcommand{\rplang}{\texttt{RP-Lang}}
+
+\renewcommand{\figurename}{Figura}
+\renewcommand{\tablename}{Tabla}
+\renewcommand{\abstractname}{Resumen}
+
+\begin{document}
+\maketitle
+
+\begin {abstract}
+
+El presente informe trata sobre el diseño e implementación de un lenguaje que permite la definición y evaluación de funciones recursivas primitivas. El compilador de \rplang{} traduce programas escritos en este lenguaje a código C, aprovechando la expresividad y eficiencia de dicho lenguaje de bajo nivel para ejecutar las funciones definidas. 
+
+\end {abstract}
+
+\tableofcontents
+
+\section {Introducción}
+
+Las funciones recursivas primitivas constituyen una clase fundamental de funciones total computables, ampliamente estudiadas en teoría de la computación. En este trabajo se presenta \rplang{}, un lenguaje de programación diseñado para expresar y evaluar exclusivamente este tipo de funciones.
+
+El desarrollo del lenguaje incluye el diseño de su sintaxis y semántica, así como la implementación de un compilador que traduce programas \rplang{} a código en lenguaje C. Para ello, se utilizaron las herramientas Flex y Bison, facilitando la construcción de los analizadores léxico y sintáctico respectivamente.
+
+El objetivo principal del proyecto es proporcionar una herramienta que permita experimentar con funciones recursivas primitivas de forma práctica.
+
+\section {Modelo computacional}
+
+\subsection {Dominio}
+
+Desarrollar un lenguaje que permita definir funciones recursivas primitivas (RP). Las funciones RP son de la forma $f:\mathbb N^k\to\mathbb N$. Las mismas cumplen que están definidas en base a los esquemas recursivos de tipo I y tipo II y composición a partir de las funciones iniciales:
+\begin{itemize}
+\item $suc:\mathbb N \to \mathbb N, suc(x) = x + 1$
+\item $const_k:\mathbb N \to \mathbb N, const_k(x) = k$
+\item $\pi^k_j:\mathbb N^k \to \mathbb N, \pi^k_j(x_1, \cdots, x_k) = x_j$
+\end{itemize}
+
+Las definiciones de funciones RP pueden ser composiciones o esquemas recursivos:
+\begin{itemize}
+\item Para la composición, si $h$ y $g$ son RP $\implies f(x) = g(h(x))$ es RP. 
+\item Para el esquema recursivo de tipo I, si $g:\mathbb N^2\to\mathbb N$ es RP $\implies f:\mathbb N\to\mathbb N$ tal que $f(0) = k \in \mathbb N$ y $f(n + 1) = g(n, f(n))$ es RP.
+\item Para el esquema recursivo de tipo II, $g:\mathbb N^{n+2}\to\mathbb N$ y $q:\mathbb N^{n}\to\mathbb N$ son RP $\implies f:\mathbb N^{n+1}\to\mathbb N$ tal que $f(x_1, \cdots, x_n, 0) = q(x_1, \cdots, x_n)$ y $f(x_1, \cdots, x_n, y + 1) = g(x_1, \cdots, x_n, y, f(x_1, \cdots, x_n, y))$ es RP.
+\end{itemize}
+
+El lenguaje permite evaluar cualquier función RP que se haya definido. Haciendo uso de las definiciones de las mismas para evaluarlas recursivamente y obtener un valor de salida. 
+
+\subsection {Lenguaje}
+
+
+
+\section {Implementación}
+\subsection {Frontend}
+\subsection {Backend}
+\subsection {Dificultades encontradas}
+
+\section {Futuras Extensiones}
+\section {Conclusiones}
+\section {Referencias}
+\section {Bibliografía}
+
+\end{document}
