@@ -3,15 +3,12 @@
 
 typedef struct FunctionTable {
     struct hashmap * table; 
-}FunctionTable;
+} FunctionTable;
 
 typedef struct FunctionTableRow {
     char * functionName;
     int argumentCount;
 } FunctionTableRow;
-
-
-
 
 void _freeFunctionTableRow(void *row) {
     if (row == NULL) return;
@@ -63,11 +60,9 @@ int insertFunction(FunctionTableType functionTable, const char * functionName, A
     row.functionName = calloc(strlen(functionName) + 1, sizeof(char));
     if (row.functionName == NULL) return 0;
 
-
     strcpy((char *)row.functionName, functionName);
 
     row.argumentCount = getSize(argumentList);
-    
 
     hashmap_set(functionTable->table, &row);
 }

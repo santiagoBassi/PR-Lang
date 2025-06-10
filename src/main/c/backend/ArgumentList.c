@@ -46,6 +46,12 @@ void insertArgumentList(ArgumentListType argumentList, const char * argument) {
     argumentList->size++;
 }
 
+const char* lastArgument(ArgumentListType argumentList) {
+    if (argumentList == NULL || argumentList->last == NULL) return NULL;
+
+    return argumentList->last->value;
+}
+
 const char* nextArgument(ArgumentListType argumentList) {
     if (argumentList == NULL || argumentList->current == NULL) return NULL;
 
