@@ -130,13 +130,35 @@ def ^(x, y):
 \end{verbatim}
 
 \section {Implementación}
+
 \subsection {Frontend}
+
+Para la implementación del frontend se utilizaron las herramientas:
+\begin{itemize}
+\item Flex para el análisis léxico.
+\item Bison para el análisis sintáctico.
+\end{itemize}
+
+Durante esta etapa, el lenguaje sufrió leves modificaciones con respecto a su diseño original con el fin de resolver ambigüedades presentes en la gramática y facilitar el análisis sintáctico.
+
+El frontend incorpora diversas validaciones estructurales. Sin embargo, otras validaciones semánticas más específicas, como correcta cantidad de argumentos, orden correcto de argumentos, entre otros, se delegan al backend del compilador para una mayor flexibilidad y separación de responsabilidades.
+
+Como resultado de esta fase, se genera un árbol de sintaxis abstracta (AST) que representa la estructura lógica del programa y sirve como base para las etapas posteriores del proceso de compilación.
+
 \subsection {Backend}
+
+El backend toma el AST generado por el frontend del compilador y genera código en el lenguaje C. El código de salida se produce en una sola pasada por el AST, el recorrido recursivo del árbol se asiste de una tabla de funciones que contiene información pertinente a cada función, tales como argumentos, cantidad de argumentos y nombre de la función.
+
+La tabla de funciones utiliza un hashmap que utiliza como clave el nombre de la función y como valor una estructura que tiene información relevante a la función. Se utilizó la implementación de hashmap de X. Como nuestro lenguaje permite que los nombres de las funciones sean no alfanúmericas, la tabla de funciones tiene que tener un mapeo entre el nombre de la función en nuestro lenguaje y en el código C.
+
 \subsection {Dificultades encontradas}
 
 \section {Futuras Extensiones}
+
 \section {Conclusiones}
+
 \section {Referencias}
+
 \section {Bibliografía}
 
 A continuación, se enumeran las fuentes consultadas para la elaboración de este trabajo.
