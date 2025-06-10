@@ -4,15 +4,23 @@
 #include "ArgumentList.h"
 #include "FunctionTable.h"
 #include <stdio.h>
+#include <string.h>
 
 static Logger * _logger = NULL;
 FILE* _output_file = NULL;
 FunctionTableType functionTable = NULL;
 
+void _initializeSucInTable();
+
 void initializeGeneratorModule() {
     functionTable = createFunctionTable();
     _output_file = stdout;
 	_logger = createLogger("Generator");
+
+    ArgumentListType sucArgs = createArgumentList();
+    insertArgument(sucArgs, "x");
+    insertFunction(functionTable, "suc", sucArgs);
+    freeArgumentList(sucArgs);
 }
 
 void shutdownGeneratorModule() {
@@ -66,7 +74,7 @@ void _preamble(){
     _output(
         "#include <stdio.h>\n"
         "int get_positive_integer_from_stdin(){\n"
-        "int out = 0; scanf(\"%d\", &out);\n"
+        "int out = 0; scanf(\"%%d\", &out);\n"
         "return (out < 0 ? 0 : out);\n"
         "}\n"
     );
@@ -118,9 +126,13 @@ int _generateDefinition(Definition* definition){
     if (definition == NULL) return false;
 
     ArgumentListType argsList = createArgumentList();
+    if (argsList == NULL) return false;
+
     for (FunctionArgs* arg = definition->args; arg != NULL; arg = arg->args) {
         insertArgument(argsList, arg->arg);
     }
+
+    insertFunction(functionTable, definition->fun, argsList);
 
     _output("int %s(", definition->fun);
     if (!_generateFunctionArgs(definition->args)) {
@@ -135,11 +147,18 @@ int _generateDefinition(Definition* definition){
     _output("}\n");
 
     freeArgumentList(argsList);
+
+    return true;
 }
 
 int _validFunctionArgs(FunctionArgs* args, ArgumentListType argsList) {
+    resetArgumentList(argsList);
     for (FunctionArgs* arg = args; arg != NULL; arg = arg->args) {
-        if (arg->type != VAR_ARG || !containsArgument(argsList, arg->arg)) {
+        if (!hasNextArgument(argsList)) {
+            logError(_logger, "Invalid argument count");
+            return false;
+        }
+        if (arg->type != VAR_ARG || strcmp(nextArgument(argsList), arg->arg) != 0) {
             logError(_logger, "Argument %s is not defined in the current scope", arg->arg);
             return false;
         }
@@ -183,6 +202,8 @@ int _generateCompositionDef(CompositionDef* compositionDef, ArgumentListType arg
         return false;
     }
     _output(";\n");
+
+    return true;
 }
 
 int _generateRecursiveDef(RecursiveDef* def, ArgumentListType argsList) {
@@ -193,10 +214,11 @@ int _generateRecursiveDef(RecursiveDef* def, ArgumentListType argsList) {
 
 int _validBaseCaseArgs(ArgumentListType argsList, FunctionArgs* args) {
     for (FunctionArgs* arg = args; arg != NULL; arg = arg->args) {
-        if (arg->type == VAR_ARG && !containsArgument(argsList, arg->arg)) {
+        if (arg->type == VAR_ARG && (!containsArgument(argsList, arg->arg) || arg->args == NULL)) {
             logError(_logger, "Argument %s is not defined in the current scope", arg->arg);
             return false;
-        } else if (arg->type == NUM_ARG && (arg->num != 0 || arg->args != NULL)) {
+        }
+        if (arg->type == NUM_ARG && (arg->num != 0 || arg->args != NULL)) {
             logError(_logger, "Last argument of base case must be a zero. Got: %d", arg->num);
             return false;
         }
@@ -214,11 +236,12 @@ int _generateBaseCase(BaseCase* baseCase, ArgumentListType argsList) {
     }
 
     if (!_validBaseCaseArgs(argsList, baseCase->args)) {
+        logError(_logger, "Error in base case: invalid args");
         return false;
     }
 
-    _output("if (%s == 0) {\n", lastArgument(argsList));
-    int expressionStatus = _generateExpression(baseCase->expression);
+    _output("if (%s == 0) {\nreturn", lastArgument(argsList));
+    int expressionStatus = _generateExpressionInDefinition(baseCase->expression, argsList);
     _output(";\n}\n\n");
 
     return expressionStatus;
@@ -349,7 +372,7 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, Argu
         return false;
     }
 
-    if (_getExpressionArgsLen(expression->args) != getSize(argsList)) {
+    if (_getExpressionArgsLen(expression->args) != getArgumentCount(functionTable, expression->fun)) {
         logError(_logger, "Error in arguments: wrong argument count passed to function");
         return false;
     }
@@ -375,7 +398,7 @@ int _generateExpressionArgs(ExpressionArgs* expressionArgs) {
 }
 
 int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, ArgumentListType argsList) {
-    if (expressionArgs == NULL || argsList == NULL) return false;
+    if (argsList == NULL) return false;
 
     for (ExpressionArgs* arg = expressionArgs; arg != NULL; arg = arg->expressionArgs) {
         if (!_generateExpressionInDefinition(arg->expression, argsList)) {

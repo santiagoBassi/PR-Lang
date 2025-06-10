@@ -60,7 +60,7 @@ const char* nextArgument(ArgumentListType argumentList) {
     return value;
 }
 
-int hasNextArgumentList(ArgumentListType argumentList) {
+int hasNextArgument(ArgumentListType argumentList) {
     if (argumentList == NULL) return 0;
     return argumentList->current != NULL;
 }

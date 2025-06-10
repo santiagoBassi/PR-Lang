@@ -77,11 +77,10 @@ int getArgumentCount(FunctionTableType functionTable, const char * functionName)
     FunctionTableRow row;
     row.functionName = (char *)functionName;
 
+    const FunctionTableRow * tableRow = hashmap_get(functionTable->table, &row);
+    if (tableRow == NULL) return -1;
     
-    const FunctionTableRow * argumentList = hashmap_get(functionTable->table, &row);
-    if (argumentList == NULL) return -1;
-    
-    return argumentList->argumentCount;
+    return tableRow->argumentCount;
 }   
 
 void freeFunctionTable(FunctionTableType functionTable) {
