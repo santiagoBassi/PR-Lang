@@ -134,17 +134,20 @@ int _generateDefinition(Definition* definition){
 
     if (!insertFunction(functionTable, definition->fun, argsList)) {
         logError(_logger, "Error in function definition: could not create a function with name %s, make sure it's not already declared", definition->fun);
+        freeArgumentList(argsList);
         return false;
     }
 
     _output("int %s(", definition->fun);
     if (!_generateFunctionArgs(definition->args)) {
         logError(_logger, "Invalid arguments error");
+        freeArgumentList(argsList);
         return false;
     }
     _output("){\n");
     if (!_generateDefinitionBody(definition->definitionBody, definition->fun, argsList)) {
         logError(_logger, "Invalid definition body error");
+        freeArgumentList(argsList);
         return false;
     }
     _output("}\n");
