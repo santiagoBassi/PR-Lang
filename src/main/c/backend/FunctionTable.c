@@ -48,18 +48,20 @@ FunctionTableType createFunctionTable() {
 }
 
 int insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList) {
-    if (functionTable == NULL || functionName == NULL || argumentList == NULL || containsFunction(functionTable, functionName)) return 0;
+    if (functionTable == NULL || functionName == NULL || argumentList == NULL || containsFunction(functionTable, functionName)) return false;
 
     FunctionTableRow row;
 
     row.functionName = calloc(strlen(functionName) + 1, sizeof(char));
-    if (row.functionName == NULL) return 0;
+    if (row.functionName == NULL) return false;
 
     strcpy((char *)row.functionName, functionName);
 
     row.argumentCount = getSize(argumentList);
 
     hashmap_set(functionTable->table, &row);
+
+    return true;
 }
 
 int containsFunction(FunctionTableType functionTable, const char * functionName) {

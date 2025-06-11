@@ -42,12 +42,12 @@ int _generateDefinition(Definition* definition);
 int _validFunctionArgs(FunctionArgs* args, ArgumentListType argsList);
 int _generateFunctionArgs(FunctionArgs* args);
 
-int _generateDefinitionBody(DefinitionBody* definitionBody, ArgumentListType argsList);
-int _generateCompositionDef(CompositionDef* compositionDef, ArgumentListType argsList);
+int _generateDefinitionBody(DefinitionBody* definitionBody, const char* functionName, ArgumentListType argsList);
+int _generateCompositionDef(CompositionDef* compositionDef, const char* functionName, ArgumentListType argsList);
 
-int _generateRecursiveDef(RecursiveDef* def, ArgumentListType argsList);
-int _generateBaseCase(BaseCase* baseCase, ArgumentListType argsList);
-int _generateNextCase(NextCase* nextCase, ArgumentListType argsList);
+int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentListType argsList);
+int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentListType argsList);
+int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList);
 
 int _generateExpression(Expression* expression);
 int _generateFunctionExpression(FunctionExpression* functionExpression);
@@ -132,7 +132,10 @@ int _generateDefinition(Definition* definition){
         insertArgument(argsList, arg->arg);
     }
 
-    insertFunction(functionTable, definition->fun, argsList);
+    if (!insertFunction(functionTable, definition->fun, argsList)) {
+        logError(_logger, "Error in function definition: could not create a function with name %s, make sure it's not already declared", definition->fun);
+        return false;
+    }
 
     _output("int %s(", definition->fun);
     if (!_generateFunctionArgs(definition->args)) {
@@ -140,7 +143,7 @@ int _generateDefinition(Definition* definition){
         return false;
     }
     _output("){\n");
-    if (!_generateDefinitionBody(definition->definitionBody, argsList)) {
+    if (!_generateDefinitionBody(definition->definitionBody, definition->fun, argsList)) {
         logError(_logger, "Invalid definition body error");
         return false;
     }
@@ -179,22 +182,27 @@ int _generateFunctionArgs(FunctionArgs* args){
     return true;
 }
 
-int _generateDefinitionBody(DefinitionBody* definitionBody, ArgumentListType argsList){
+int _generateDefinitionBody(DefinitionBody* definitionBody, const char* functionName, ArgumentListType argsList){
     if (definitionBody == NULL) return false;
 
     switch (definitionBody->type) {
         case COMPOSITION:
-            return _generateCompositionDef(definitionBody->compositionDef, argsList);
+            return _generateCompositionDef(definitionBody->compositionDef, functionName, argsList);
         case RECURSIVE:
-            return _generateRecursiveDef(definitionBody->recursiveDef, argsList);
+            return _generateRecursiveDef(definitionBody->recursiveDef, functionName, argsList);
         default:
             logError(_logger, "Unknown function definition type: %d", definitionBody->type);
             return false;
     }
 }
 
-int _generateCompositionDef(CompositionDef* compositionDef, ArgumentListType argsList){
+int _generateCompositionDef(CompositionDef* compositionDef, const char* functionName, ArgumentListType argsList){
     if (compositionDef == NULL) return false;
+
+    if (strcmp(compositionDef->fun, functionName) != 0) {
+        logError(_logger, "Error in composition definition: function name %s is not part of the definition", compositionDef->fun);
+        return false;
+    }
 
     _output("return ");
     if (!_generateExpressionInDefinition(compositionDef->expression, argsList)) {
@@ -206,10 +214,10 @@ int _generateCompositionDef(CompositionDef* compositionDef, ArgumentListType arg
     return true;
 }
 
-int _generateRecursiveDef(RecursiveDef* def, ArgumentListType argsList) {
+int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentListType argsList) {
     if (def == NULL) return false;
 
-    return _generateBaseCase(def->baseCase, argsList) && _generateNextCase(def->nextCase, argsList);
+    return _generateBaseCase(def->baseCase, functionName, argsList) && _generateNextCase(def->nextCase, functionName, argsList);
 }
 
 int _validBaseCaseArgs(ArgumentListType argsList, FunctionArgs* args) {
@@ -227,10 +235,10 @@ int _validBaseCaseArgs(ArgumentListType argsList, FunctionArgs* args) {
     return true;
 }
 
-int _generateBaseCase(BaseCase* baseCase, ArgumentListType argsList) {
+int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentListType argsList) {
     if (baseCase == NULL || functionTable == NULL) return false;
     
-    if (!containsFunction(functionTable, baseCase->fun)) {
+    if (strcmp(baseCase->fun, functionName) != 0) {
         logError(_logger, "Error in base case: function name %s is not part of the definition", baseCase->fun);
         return false;
     }
@@ -247,10 +255,10 @@ int _generateBaseCase(BaseCase* baseCase, ArgumentListType argsList) {
     return expressionStatus;
 }
 
-int _generateNextCase(NextCase* nextCase, ArgumentListType argsList) {
+int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList) {
     if (nextCase == NULL || functionTable == NULL) return false;
 
-    if (!containsFunction(functionTable, nextCase->fun)) {
+    if (strcmp(nextCase->fun, functionName) != 0) {
         logError(_logger, "Error in next case: function name %s is not part of the definition", nextCase->fun);
         return false;
     }
