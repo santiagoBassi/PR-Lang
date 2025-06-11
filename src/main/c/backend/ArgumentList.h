@@ -21,6 +21,8 @@ void resetArgumentList(ArgumentListType argumentList);
 
 int containsArgument(ArgumentListType argumentList, const char * argument);
 
+const char* removeLastArgument(ArgumentListType argumentList);
+
 void freeArgumentList(ArgumentListType argumentList);
 
 int getSize(ArgumentListType argumentList);

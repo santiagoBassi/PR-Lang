@@ -220,18 +220,23 @@ int _generateCompositionDef(CompositionDef* compositionDef, const char* function
 int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentListType argsList) {
     if (def == NULL) return false;
 
+    const char* last = removeLastArgument(argsList); // x_n = 0 => base case can't use last arg
     if (!_generateBaseCase(def->baseCase, functionName, argsList)) {
         logError(_logger, "Could not generate base case of recursive definition");
+        free((void*)last);
         return false;
     }
+    insertArgument(argsList, last);
 
-    const char* last = lastArgument(argsList);
     _output("%s--;\n\n", last);
 
     if (!_generateNextCase(def->nextCase, functionName, argsList)) {
         logError(_logger, "Could not generate next case of recursive definition");
+        free((void*)last);
         return false;
     }
+
+    free((void*)last);
 
     return true;
 }
@@ -394,7 +399,6 @@ int _validExpressionArgsInDefinition(ExpressionArgs* args, ArgumentListType args
     resetArgumentList(argsList);
     for (ExpressionArgs* arg = args; arg != NULL; arg = arg->expressionArgs) {
         if (!hasNextArgument(argsList)) {
-            logError(_logger, "Invalid argument count");
             return false;
         }
         Expression* exp = arg->expression;

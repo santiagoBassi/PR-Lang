@@ -83,6 +83,33 @@ int containsArgument(ArgumentListType argumentList, const char * argument) {
     return 0;
 }
 
+const char* removeLastArgument(ArgumentListType argumentList) {
+    if (argumentList == NULL) return NULL;
+
+    Argument * current = argumentList->arguments;
+
+    if (current->next == NULL) {
+        const char* value = current->value;
+        free(current);
+        argumentList->arguments = NULL;
+        argumentList->size = 0;
+        argumentList->last = NULL;
+        return value;
+    }
+
+    while (current->next != argumentList->last && current->next != NULL) {
+        current = current->next;
+    }
+
+    const char* value = argumentList->last->value;
+    free(argumentList->last);
+
+    current->next = NULL;
+    argumentList->last = current;
+
+    return value;
+}
+
 void freeArgumentList(ArgumentListType argumentList) {
     if (argumentList == NULL) return;
 
