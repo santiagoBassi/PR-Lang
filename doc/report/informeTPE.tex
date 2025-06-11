@@ -147,9 +147,62 @@ Como resultado de esta fase, se genera un árbol de sintaxis abstracta (AST) que
 
 \subsection {Backend}
 
-El backend toma el AST generado por el frontend del compilador y genera código en el lenguaje C. El código de salida se produce en una sola pasada por el AST, el recorrido recursivo del árbol se asiste de una tabla de funciones que contiene información pertinente a cada función, tales como argumentos, cantidad de argumentos y nombre de la función.
+El backend del compilador toma como entrada el árbol de sintaxis abstracta (AST) generado por el frontend y produce como salida el código equivalente en lenguaje C. La generación de código se realiza en una única pasada recursiva sobre el AST, asistida por una tabla de funciones que contiene información relevante sobre cada función definida en el programa.
 
-La tabla de funciones utiliza un hashmap que utiliza como clave el nombre de la función y como valor una estructura que tiene información relevante a la función. Se utilizó la implementación de hashmap de X. Como nuestro lenguaje permite que los nombres de las funciones sean no alfanúmericas, la tabla de funciones tiene que tener un mapeo entre el nombre de la función en nuestro lenguaje y en el código C.
+Esta tabla de funciones actúa como contexto y almacena, para cada función, su nombre original, nombre traducido al C (dado que \rplang{} permite nombres no alfanuméricos), cantidad de argumentos y lista de parámetros. Para su implementación se utilizó una estructura de tipo hashmap, provista por la librería \texttt{X}, donde la clave es el identificador de la función en \rplang{} y el valor es una estructura con los metadatos necesarios para la generación de código.
+
+Durante el recorrido del AST, el backend realiza varias validaciones semánticas que no eran posibles o convenientes de implementar en el frontend. Estas validaciones incluyen:
+\begin{itemize}
+\item Validar cantidad correcta de parametros al momento de evaluar y definir una función.
+\item Validar oden correcto de los parametros en el caso base y chequeo de último parametro del caso base igual a la constante $0$.
+\item Validar orden correcto de los parametros en el paso recursivo.
+\item Validar que en las definiciones los símbolos utilizados esten definidos en el scope de la función.
+\item Validar que en los factores en las definiciones no puedan ser entradas por teclado.
+\item Validar que las funciones utilizadas esten definidas previamente.
+\item Validar que al definir una función la misma no este definida previamente.
+\end{itemize}
+
+Una vez que todas las validaciones han sido superadas, se genera el código C correspondiente. El código producido mantiene la estructura funcional del programa original, pero expresada mediante funciones recursivas en C.
+
+A continuación se muestra la estructura del código C generado por el compilador de \rplang{} dado un programa válido de entrada.
+
+\begin{verbatim}
+#include<stdio.h>
+
+int get_positive_integer_from_stdin(){
+int out = 0; scanf("%d", &out);
+return (out < 0 ? 0 : out);
+}
+
+int suc(int n){
+return n+1;
+}
+
+// definitions go here
+
+// example definition
+int fun1(int x, int y){
+if (y == 0) {
+return x ;
+}
+
+y--;
+
+return suc(fun1( x , y ));
+}
+
+int main() {
+//evaluations go here
+
+//example evaluation. Evaluations are printed
+printf("%d", fun1( 5 , 2 ));
+
+return 0;
+}
+
+\end{verbatim}
+
+Cabe destacar que, debido a la naturaleza de las funciones recursivas primitivas, el código generado no es eficiente desde el punto de vista computacional. Por ejemplo, para calcular $x + y$ se requiere realizar $y$ llamadas recursivas, replicando la definición formal de la suma como función RP. Esto va a ser general para todas las funciones RP, si $f:\mathbb N^k\to\mathbb N$ tal que $f(x_1,\cdots,x_k)$, requiere realizar $x_k$ llamadas recursivas. Esta ineficiencia es inherente al modelo teórico que el lenguaje busca representar. Aunque algunas de estas funciones podrían implementarse de forma iterativa para mejorar el rendimiento, ese no es el objetivo de \rplang{}, que prioriza la fidelidad al modelo matemático por sobre la eficiencia.
 
 \subsection {Dificultades encontradas}
 

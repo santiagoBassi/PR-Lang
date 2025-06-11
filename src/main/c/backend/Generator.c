@@ -55,11 +55,11 @@ int _generateBinaryExpression(BinaryExpression* binaryExpression);
 int _generateFactor(Factor* factor);
 int _generateExpressionArgs(ExpressionArgs* expressionArgs);
 
-int _generateExpressionInDefinition(Expression* expression, ArgumentListType argsList);
-int _generateFunctionExpressionInDefinition(FunctionExpression* functionExpression, ArgumentListType argsList);
-int _generateBinaryExpressionInDefinition(BinaryExpression* binaryExpression, ArgumentListType argsList);
+int _generateExpressionInDefinition(Expression* expression, const char* functionName, ArgumentListType argsList);
+int _generateFunctionExpressionInDefinition(FunctionExpression* functionExpression, const char* functionName, ArgumentListType argsList);
+int _generateBinaryExpressionInDefinition(BinaryExpression* binaryExpression, const char* functionName, ArgumentListType argsList);
 int _generateFactorInDefinition(Factor* factor, ArgumentListType argsList);
-int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, ArgumentListType argsList);
+int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, const char* functionName, ArgumentListType argsList);
 
 void _output(const char* const format, ...);
 
@@ -208,7 +208,7 @@ int _generateCompositionDef(CompositionDef* compositionDef, const char* function
     }
 
     _output("return ");
-    if (!_generateExpressionInDefinition(compositionDef->expression, argsList)) {
+    if (!_generateExpressionInDefinition(compositionDef->expression, functionName, argsList)) {
         logError(_logger, "Invalid composition definition error");
         return false;
     }
@@ -220,7 +220,20 @@ int _generateCompositionDef(CompositionDef* compositionDef, const char* function
 int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentListType argsList) {
     if (def == NULL) return false;
 
-    return _generateBaseCase(def->baseCase, functionName, argsList) && _generateNextCase(def->nextCase, functionName, argsList);
+    if (!_generateBaseCase(def->baseCase, functionName, argsList)) {
+        logError(_logger, "Could not generate base case of recursive definition");
+        return false;
+    }
+
+    const char* last = lastArgument(argsList);
+    _output("%s--;\n\n", last);
+
+    if (!_generateNextCase(def->nextCase, functionName, argsList)) {
+        logError(_logger, "Could not generate next case of recursive definition");
+        return false;
+    }
+
+    return true;
 }
 
 int _validBaseCaseArgs(ArgumentListType argsList, FunctionArgs* args) {
@@ -252,7 +265,7 @@ int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentList
     }
 
     _output("if (%s == 0) {\nreturn", lastArgument(argsList));
-    int expressionStatus = _generateExpressionInDefinition(baseCase->expression, argsList);
+    int expressionStatus = _generateExpressionInDefinition(baseCase->expression, functionName, argsList);
     _output(";\n}\n\n");
 
     return expressionStatus;
@@ -272,7 +285,7 @@ int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentList
     }
 
     _output("return ");
-    int expressionStatus = _generateExpressionInDefinition(nextCase->expression, argsList);
+    int expressionStatus = _generateExpressionInDefinition(nextCase->expression, functionName, argsList);
     _output(";\n");
 
     return expressionStatus;
@@ -294,16 +307,16 @@ int _generateExpression(Expression* expression) {
     }
 }
 
-int _generateExpressionInDefinition(Expression* expression, ArgumentListType argsList) {
+int _generateExpressionInDefinition(Expression* expression, const char* functionName, ArgumentListType argsList) {
     if (expression == NULL || argsList == NULL) return false;
 
     switch (expression->type) {
         case FACTOR:
             return _generateFactorInDefinition(expression->factor, argsList);
         case FUNCTION:
-            return _generateFunctionExpressionInDefinition(expression->functionExpression, argsList);
+            return _generateFunctionExpressionInDefinition(expression->functionExpression, functionName, argsList);
         case BINARY:
-            return _generateBinaryExpressionInDefinition(expression->binaryExpression, argsList);
+            return _generateBinaryExpressionInDefinition(expression->binaryExpression, functionName, argsList);
         default:
             logError(_logger, "Unknown expression type: %d", expression->type);
             return false;
@@ -375,7 +388,26 @@ int _generateFunctionExpression(FunctionExpression* expression) {
     return expressionArgsStatus;
 }
 
-int _generateFunctionExpressionInDefinition(FunctionExpression* expression, ArgumentListType argsList) {
+int _validExpressionArgsInDefinition(ExpressionArgs* args, ArgumentListType argsList) {
+    if (args == NULL) return false;
+
+    resetArgumentList(argsList);
+    for (ExpressionArgs* arg = args; arg != NULL; arg = arg->expressionArgs) {
+        if (!hasNextArgument(argsList)) {
+            logError(_logger, "Invalid argument count");
+            return false;
+        }
+        Expression* exp = arg->expression;
+        if (exp == NULL || exp->type != FACTOR || exp->factor->type != VAR_ARG || strcmp(nextArgument(argsList), exp->factor->var) != 0) {
+            logError(_logger, "Invalid argument %s in definition", exp->factor->var);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int _generateFunctionExpressionInDefinition(FunctionExpression* expression, const char* functionName, ArgumentListType argsList) {
     if (expression == NULL || argsList == NULL || functionTable == NULL) return false;
 
     if (!containsFunction(functionTable, expression->fun)) {
@@ -388,8 +420,13 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, Argu
         return false;
     }
 
+    if (strcmp(expression->fun, functionName) == 0 && !_validExpressionArgsInDefinition(expression->args, argsList)) {
+        logError(_logger, "Violation of RP definition: the defined function can only appear in the definition with the correct parameters");
+        return false;
+    }
+
     _output("%s(", expression->fun);
-    int expressionArgsStatus = _generateExpressionArgsInDefinition(expression->args, argsList);
+    int expressionArgsStatus = _generateExpressionArgsInDefinition(expression->args, functionName, argsList);
     _output(")");
     return expressionArgsStatus;
 }
@@ -408,11 +445,11 @@ int _generateExpressionArgs(ExpressionArgs* expressionArgs) {
     return true;
 }
 
-int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, ArgumentListType argsList) {
+int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, const char* functionName, ArgumentListType argsList) {
     if (argsList == NULL) return false;
 
     for (ExpressionArgs* arg = expressionArgs; arg != NULL; arg = arg->expressionArgs) {
-        if (!_generateExpressionInDefinition(arg->expression, argsList)) {
+        if (!_generateExpressionInDefinition(arg->expression, functionName, argsList)) {
             logError(_logger, "Error in expression arguments");
             return false;
         }
@@ -439,7 +476,7 @@ int _generateBinaryExpression(BinaryExpression* expression) {
     return leftExpressionStatus && rightExpressionStatus;
 }
 
-int _generateBinaryExpressionInDefinition(BinaryExpression* expression, ArgumentListType argsList) {
+int _generateBinaryExpressionInDefinition(BinaryExpression* expression, const char* functionName, ArgumentListType argsList) {
     if (expression == NULL || functionTable == NULL || argsList == NULL) return false;
 
     if (!containsFunction(functionTable, expression->fun)) {
@@ -448,9 +485,9 @@ int _generateBinaryExpressionInDefinition(BinaryExpression* expression, Argument
     }
 
     _output("%s(", expression->fun);
-    int leftExpressionStatus = _generateExpressionInDefinition(expression->left, argsList);
+    int leftExpressionStatus = _generateExpressionInDefinition(expression->left, functionName, argsList);
     _output(",");
-    int rightExpressionStatus = _generateExpressionInDefinition(expression->right, argsList);
+    int rightExpressionStatus = _generateExpressionInDefinition(expression->right, functionName, argsList);
     _output(")");
 
     return leftExpressionStatus && rightExpressionStatus;
