@@ -49,6 +49,7 @@ int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentL
 int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentListType argsList);
 int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList);
 
+int _generateEvaluation(Expression* expression);
 int _generateExpression(Expression* expression);
 int _generateFunctionExpression(FunctionExpression* functionExpression);
 int _generateBinaryExpression(BinaryExpression* binaryExpression);
@@ -77,6 +78,9 @@ void _preamble(){
         "int out = 0; scanf(\"%%d\", &out);\n"
         "return (out < 0 ? 0 : out);\n"
         "}\n"
+        "int suc(int n){\n"
+        "return n + 1;\n"
+        "}\n"
     );
 }
 
@@ -97,6 +101,8 @@ int _generateStatements(Statements* statements){
         }
     }
     
+    _output("int main() {\n");
+
     for (Statements* statement = statements; statement != NULL; statement = statement->statements) {
         if (statement->statement->type != EXPRESSION) continue; 
         if (!_generateStatement(statement->statement)) {
@@ -104,6 +110,11 @@ int _generateStatements(Statements* statements){
             return false;
         }
     }
+    
+    _output(
+        "return 0;\n"
+        "}\n"
+    );
 
     return true;
 }
@@ -115,7 +126,7 @@ int _generateStatement(Statement* statement){
         case DEFINITION:
             return _generateDefinition(statement->definition);
         case EXPRESSION:
-            return _generateExpression(statement->expression);
+            return _generateEvaluation(statement->expression);
         default:
             logError(_logger, "Unknown expression type: %d", statement->type);
             return false;
@@ -221,11 +232,15 @@ int _generateRecursiveDef(RecursiveDef* def, const char* functionName, ArgumentL
     if (def == NULL) return false;
 
     const char* last = removeLastArgument(argsList); // x_n = 0 => base case can't use last arg
+    
+    _output("if (%s == 0) {\n", last);
     if (!_generateBaseCase(def->baseCase, functionName, argsList)) {
         logError(_logger, "Could not generate base case of recursive definition");
         free((void*)last);
         return false;
     }
+    _output(";\n}\n\n");
+
     insertArgument(argsList, last);
 
     _output("%s--;\n\n", last);
@@ -269,11 +284,8 @@ int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentList
         return false;
     }
 
-    _output("if (%s == 0) {\nreturn", lastArgument(argsList));
-    int expressionStatus = _generateExpressionInDefinition(baseCase->expression, functionName, argsList);
-    _output(";\n}\n\n");
-
-    return expressionStatus;
+    _output("return", lastArgument(argsList));
+    return _generateExpressionInDefinition(baseCase->expression, functionName, argsList);
 }
 
 int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList) {
@@ -294,6 +306,16 @@ int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentList
     _output(";\n");
 
     return expressionStatus;
+}
+
+int _generateEvaluation(Expression* expression) {
+    _output("printf(\"%%d\\n\", ");
+    if (!_generateExpression(expression)) {
+        logError(_logger, "Error during evaluation");
+        return false;
+    }
+    _output(");\n");
+    return true;
 }
 
 int _generateExpression(Expression* expression) {
