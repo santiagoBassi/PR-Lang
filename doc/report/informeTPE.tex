@@ -95,6 +95,7 @@ Las funciones pueden definirse mediante expresiones compuestas o mediante esquem
 
 \paragraph{Composición}
 
+\label{code:composition}
 \begin{verbatim}
 #include times.rp
 
@@ -119,6 +120,7 @@ def !(n):
 
 \paragraph{Recursión (esquema tipo II)}
 
+\label{code:recursive}
 \begin{verbatim}
 #include times.rp
 
@@ -149,7 +151,7 @@ Como resultado de esta fase, se genera un árbol de sintaxis abstracta (AST) que
 
 El backend del compilador toma como entrada el árbol de sintaxis abstracta (AST) generado por el frontend y produce como salida el código equivalente en lenguaje C. La generación de código se realiza en una única pasada recursiva sobre el AST, asistida por una tabla de funciones que contiene información relevante sobre cada función definida en el programa.
 
-Esta tabla de funciones actúa como contexto y almacena, para cada función, su nombre original, nombre traducido al C (dado que \rplang{} permite nombres no alfanuméricos), cantidad de argumentos y lista de parámetros. Para su implementación se utilizó una estructura de tipo hashmap, provista por la librería \texttt{X}, donde la clave es el identificador de la función en \rplang{} y el valor es una estructura con los metadatos necesarios para la generación de código.
+Esta tabla de funciones actúa como contexto y almacena, para cada función, su nombre original, nombre traducido al C (dado que \rplang{} permite nombres no alfanuméricos), cantidad de argumentos y lista de parámetros. Para su implementación se utilizó una estructura de tipo hashmap, provista por la librería por \texttt{Joshua J Baker} (Baker, 2020), donde la clave es el identificador de la función en \rplang{} y el valor es una estructura con los metadatos necesarios para la generación de código.
 
 Durante el recorrido del AST, el backend realiza varias validaciones semánticas que no eran posibles o convenientes de implementar en el frontend. Estas validaciones incluyen:
 \begin{itemize}
@@ -206,17 +208,31 @@ Cabe destacar que, debido a la naturaleza de las funciones recursivas primitivas
 
 \subsection {Dificultades encontradas}
 
+A lo largo del desarrollo del compilador se presentaron diversas dificultades técnicas. A continuación se detallan algunas de las más relevantes:
+
+\begin{itemize}
+\item Ambigüedad entre definiciones recursivas y por composición: En el diseño inicial de la gramática, tanto las definiciones por composición como los casos base de definiciones recursivas compartían una misma regla gramatical del estilo: \texttt{DOUBLE\_ARROW ID OPEN\_PARENTHESIS arguments CLOSE\_PARENTHESIS EQUALS expression}. Esta similitud generaba un conflicto de tipo shift/reduce al momento del análisis sintáctico con Bison. Para resolver esta ambigüedad, se introdujo una distinción explícita entre ambos tipos de definición: se optó por utilizar el símbolo \texttt{=>} (\texttt{DOUBLE\_ARROW}) exclusivamente para definiciones por composición (ver Código \ref{code:composition}), y el símbolo \texttt{->}  (\texttt{SINGLE\_ARROW}) para las ramas de definiciones recursivas (ver Código \ref{code:recursive}). Esta decisión simplificó la gramática y eliminó los conflictos durante el parsing.
+\item Reestructuración del AST para facilitar la generación de código: Durante la implementación del backend, al recorrer el árbol de sintaxis abstracta (AST), se identificó que ciertos nodos generados por el frontend no aportaban información útil para la generación de código o bien duplicaban estructuras. Esto dificultaba innecesariamente el recorrido del árbol y la emisión de código en C. En consecuencia, se realizaron ajustes en la estructura del AST desde el frontend, eliminando nodos redundantes y simplificando la representación interna del programa. Esta reestructuración no solo facilitó la implementación del backend, sino que también mejoró la claridad y mantenibilidad del código del compilador.
+\end{itemize}
+
 \section {Futuras Extensiones}
 
 \section {Conclusiones}
 
 \section {Referencias}
 
+A continuación, se enumeran las fuentes citadas en el informe.
+\begin{itemize}
+\item \href{https://github.com/tidwall/hashmap.c/tree/master}{Baker, J. J. (2020). GitHub - tidwall/hashmap.c: Hash map implementation in C. GitHub.}
+\item \href{https://github.com/mzahnd/apuntes-9335-logica-computacional}{Zahnd, M. (2022). GitHub - mzahnd/apuntes-9335-logica-computacional: Apuntes de la materia Lógica Computacional (93.35) del ITBA. GitHub.}
+\end{itemize}
+
 \section {Bibliografía}
 
 A continuación, se enumeran las fuentes consultadas para la elaboración de este trabajo.
 \begin {itemize}
-\item \href{https://github.com/mzahnd/apuntes-9335-logica-computacional}{Zahnd, M. (2022). GitHub - mzahnd/apuntes-9335-logica-computacional: Apuntes de la materia Lógica Computacional (93.35) del ITBA. GitHub.}
+\item \href{https://en.wikipedia.org/wiki/Primitive_recursive_function}{Wikipedia contributors. (2025, June 10). Primitive recursive function. Wikipedia.}
+\item \href{https://westes.github.io/flex/manual/Patterns.html}{Lexical Analysis with Flex, for Flex 2.6.2: Patterns. (n.d.).}
 \end {itemize}
 
 \end{document}
