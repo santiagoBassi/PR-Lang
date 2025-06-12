@@ -49,7 +49,7 @@ FunctionTableType createFunctionTable() {
     return functionTable;
 }
 
-int insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList) {
+boolean insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList) {
     if (functionTable == NULL || functionName == NULL || argumentList == NULL || containsFunction(functionTable, functionName)) return false;
 
     FunctionTableRow row;
@@ -75,8 +75,8 @@ int insertFunction(FunctionTableType functionTable, const char * functionName, A
     return true;
 }
 
-int containsFunction(FunctionTableType functionTable, const char * functionName) {
-    if (functionTable == NULL || functionName == NULL) return 0;
+boolean containsFunction(FunctionTableType functionTable, const char * functionName) {
+    if (functionTable == NULL || functionName == NULL) return false;
     
     FunctionTableRow row;
     row.functionName = (char *)functionName;

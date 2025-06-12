@@ -1,6 +1,7 @@
 #ifndef ARGUMENT_LIST_H
 #define ARGUMENT_LIST_H
 
+#include "../shared/Type.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,11 +16,11 @@ const char* lastArgument(ArgumentListType argumentList);
 
 const char* nextArgument(ArgumentListType argumentList);
 
-int hasNextArgument(ArgumentListType argumentList);
+boolean hasNextArgument(ArgumentListType argumentList);
 
 void resetArgumentList(ArgumentListType argumentList);
 
-int containsArgument(ArgumentListType argumentList, const char * argument);
+boolean containsArgument(ArgumentListType argumentList, const char * argument);
 
 const char* removeLastArgument(ArgumentListType argumentList);
 

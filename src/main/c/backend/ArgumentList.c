@@ -60,8 +60,8 @@ const char* nextArgument(ArgumentListType argumentList) {
     return value;
 }
 
-int hasNextArgument(ArgumentListType argumentList) {
-    if (argumentList == NULL) return 0;
+boolean hasNextArgument(ArgumentListType argumentList) {
+    if (argumentList == NULL) return false;
     return argumentList->current != NULL;
 }
 
@@ -70,17 +70,17 @@ void resetArgumentList(ArgumentListType argumentList) {
     argumentList->current = argumentList->arguments;
 }
 
-int containsArgument(ArgumentListType argumentList, const char * argument) {
-    if (argumentList == NULL || argument == NULL) return 0;
+boolean containsArgument(ArgumentListType argumentList, const char * argument) {
+    if (argumentList == NULL || argument == NULL) return false;
 
     Argument * current = argumentList->arguments;
     while (current != NULL) {
         if (strcmp(current->value, argument) == 0) {
-            return 1;
+            return true;
         }
         current = current->next;
     }
-    return 0;
+    return false;
 }
 
 const char* removeLastArgument(ArgumentListType argumentList) {

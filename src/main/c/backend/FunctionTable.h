@@ -12,9 +12,9 @@ typedef struct FunctionTable * FunctionTableType;
 
 FunctionTableType createFunctionTable();
 
-int insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList);
+boolean insertFunction(FunctionTableType functionTable, const char * functionName, ArgumentListType argumentList);
 
-int containsFunction(FunctionTableType functionTable, const char * functionName);
+boolean containsFunction(FunctionTableType functionTable, const char * functionName);
 
 int getArgumentCount(FunctionTableType functionTable, const char * functionName);
 

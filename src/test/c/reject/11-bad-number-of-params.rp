@@ -1,0 +1,3 @@
+#include src/test/c/std/sum.rp
+
++(2, 3, 4)
