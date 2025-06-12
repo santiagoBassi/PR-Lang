@@ -15,9 +15,14 @@ BASENAME="$(basename "$INPUT" .rp)"
 TMP_C_FILE="./output/${BASENAME}.c"
 OUTPUT_BINARY="./output/${BASENAME}"
 
-# Generate the C code and save it to the .c file
-cat "$INPUT" | build/Compiler "$@" > "$TMP_C_FILE"
+# Use a temporary file to avoid partial writes
+TMP_FILE="$(mktemp)"
 
+# Generate the C code and save it to the temporary file
+cat "$INPUT" | build/Compiler "$@" > "$TMP_FILE"
+
+# Move the fully generated file to the final destination
+mv "$TMP_FILE" "$TMP_C_FILE"
 
 # Compile the C code to a binary
 gcc "$TMP_C_FILE" -o "$OUTPUT_BINARY"
