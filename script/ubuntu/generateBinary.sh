@@ -8,23 +8,18 @@ cd "$BASE_PATH"
 INPUT="$1"
 shift 1
 
-# Obtener el nombre base sin la extensión .rp
+# Get the base name without the .rp extension
 BASENAME="$(basename "$INPUT" .rp)"
 
-# Archivo C y binario con el mismo nombre base
+# C file and binary with the same base name
 TMP_C_FILE="./output/${BASENAME}.c"
 OUTPUT_BINARY="./output/${BASENAME}"
 
-# Generar el código C y guardarlo en el archivo .c
+# Generate the C code and save it to the .c file
 cat "$INPUT" | build/Compiler "$@" > "$TMP_C_FILE"
 
-# Compilar el código C a binario
+
+# Compile the C code to a binary
 gcc "$TMP_C_FILE" -o "$OUTPUT_BINARY"
 
-# Ejecutar el binario (opcional)
-# ./"$OUTPUT_BINARY"
-
-# Borrar el archivo temporal (opcional)
-# rm "$TMP_C_FILE"
-
-echo "Compilación finalizada. Binario generado: $OUTPUT_BINARY"
+echo "Compilation finished. Binary generated: $OUTPUT_BINARY"
