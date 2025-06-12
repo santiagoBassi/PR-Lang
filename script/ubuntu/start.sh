@@ -6,5 +6,6 @@ BASE_PATH="$(dirname "$0")/../.."
 cd "$BASE_PATH"
 
 INPUT="$1"
-shift 1
-cat "$INPUT" | build/Compiler "$@"
+OUTPUT="$2"
+shift 2
+build/Compiler "$INPUT" "$OUTPUT" "$@"

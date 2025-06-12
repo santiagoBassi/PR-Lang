@@ -69,6 +69,7 @@ add_executable(Compiler
 	src/main/c/shared/Environment.c
 	src/main/c/shared/Logger.c
 	src/main/c/shared/String.c
+    src/main/c/shared/Arguments.c
 	src/main/c/backend/HashMap.c
 	src/main/c/backend/ArgumentList.c
 	src/main/c/backend/FunctionTable.c

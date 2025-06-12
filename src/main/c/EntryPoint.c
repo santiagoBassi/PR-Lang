@@ -1,3 +1,4 @@
+#include "backend/FunctionTable.h"
 #include "frontend/lexical-analysis/FlexActions.h"
 #include "frontend/syntactic-analysis/AbstractSyntaxTree.h"
 #include "frontend/syntactic-analysis/BisonActions.h"
@@ -7,9 +8,9 @@
 #include "shared/Environment.h"
 #include "shared/Logger.h"
 #include "shared/String.h"
+#include "shared/Arguments.h"
 #include "backend/Generator.h"
 #include <stdio.h>
-#include <string.h>
 
 /**
  * The main entry-point of the entire application. If you use "strtok" to
@@ -18,23 +19,34 @@
  */
 const int main(const int count, const char ** arguments) {
 	Logger * logger = createLogger("EntryPoint");
-	initializeFlexActionsModule();
-	initializeBisonActionsModule();
-	initializeSyntacticAnalyzerModule();
-	initializeAbstractSyntaxTreeModule();
-	initializeGeneratorModule();
 
 	// Logs the arguments of the application.
 	for (int k = 0; k < count; ++k) {
 		logDebugging(logger, "Argument %d: \"%s\"", k, arguments[k]);
 	}
 
-	// Begin compilation process.
-	CompilerState compilerState = {
+    CompilerState compilerState = {
 		.abstractSyntaxtTree = NULL,
+        .functionTable = NULL,
 		.succeed = false,
 		.value = 0
 	};
+
+    if ((compilerState.inputFile = getInputFilename(count, arguments)) == NULL || (compilerState.outputFile = getOutputFilename(count, arguments)) == NULL) {
+        logError(logger, "The compiler must be called in the following way: compiler inputfile outputfile");
+        destroyLogger(logger);
+        return FAILED;
+    }
+
+    compilerState.functionTable = createFunctionTable();
+
+	initializeFlexActionsModule();
+	initializeBisonActionsModule();
+	initializeSyntacticAnalyzerModule();
+	initializeAbstractSyntaxTreeModule();
+	initializeGeneratorModule(&compilerState);
+
+	// Begin compilation process.
 	const SyntacticAnalysisStatus syntacticAnalysisStatus = parse(&compilerState);
 	CompilationStatus compilationStatus = SUCCEED;
 	Program * program = compilerState.abstractSyntaxtTree;
@@ -56,6 +68,7 @@ const int main(const int count, const char ** arguments) {
         printProgram(program);
     }
 
+    freeFunctionTable(compilerState.functionTable);
 	logDebugging(logger, "Releasing AST resources...");
 	releaseProgram(program);
 	logDebugging(logger, "Releasing modules resources...");

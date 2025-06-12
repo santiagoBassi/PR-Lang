@@ -1,5 +1,6 @@
 #include "SyntacticAnalyzer.h"
 #include "../lexical-analysis/LexicalAnalyzerContext.h"
+#include <stdio.h>
 
 /* MODULE INTERNAL STATE */
 
@@ -32,6 +33,7 @@ extern LexicalAnalyzerContext * createLexicalAnalyzerContext();
  * @see https://www.gnu.org/software/bison/manual/html_node/Parser-Function.html
  */
 extern int yyparse(void);
+extern FILE* yyin;
 
 // Bison error-reporting function.
 void yyerror(const char * string) {
@@ -47,6 +49,15 @@ CompilerState * currentCompilerState() {
 
 SyntacticAnalysisStatus parse(CompilerState * compilerState) {
 	logDebugging(_logger, "Parsing...");
+
+    FILE* file = fopen(compilerState->inputFile, "r");
+    if (file == NULL) {
+        logError(_logger, "Could not open input file name: %s", compilerState->inputFile);
+        return REJECT;
+    }
+
+    yyin = file;
+
 	_currentCompilerState = compilerState;
 	const int code = yyparse();
 	_currentCompilerState = NULL;
@@ -55,6 +66,7 @@ SyntacticAnalysisStatus parse(CompilerState * compilerState) {
 	switch (code) {
 		case 0:
 			if (compilerState->succeed == true) {
+                fclose(file);
 				return ACCEPT;
 			}
 			else {
@@ -71,6 +83,8 @@ SyntacticAnalysisStatus parse(CompilerState * compilerState) {
 			logError(_logger, "Unknown error inside Bison engine (code = %d).", code);
 			syntacticAnalysisStatus = UNKNOWN_ERROR;
 	}
+    
+    fclose(file);
 	compilerState->succeed = false;
 	return syntacticAnalysisStatus;
 }

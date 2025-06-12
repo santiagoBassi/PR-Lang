@@ -3,7 +3,7 @@
 
 #include "../shared/CompilerState.h"
 
-void initializeGeneratorModule();
+void initializeGeneratorModule(CompilerState* compilerState);
 void generateCode(CompilerState *compilerState);
 void shutdownGeneratorModule();
 

@@ -11,15 +11,18 @@ shift 1
 # Get the base name without the .rp extension
 BASENAME="$(basename "$INPUT" .rp)"
 
+# Ensure the output directory exists
+mkdir -p ./output
+
 # C file and binary with the same base name
 TMP_C_FILE="./output/${BASENAME}.c"
 OUTPUT_BINARY="./output/${BASENAME}"
 
-# Use a temporary file to avoid partial writes
+# Use a temporary file as the compiler's output target
 TMP_FILE="$(mktemp)"
 
-# Generate the C code and save it to the temporary file
-cat "$INPUT" | build/Compiler "$@" > "$TMP_FILE"
+# Generate the C code using the compiler with input and output files
+build/Compiler "$INPUT" "$TMP_FILE" "$@"
 
 # Move the fully generated file to the final destination
 mv "$TMP_FILE" "$TMP_C_FILE"
@@ -28,3 +31,4 @@ mv "$TMP_FILE" "$TMP_C_FILE"
 gcc "$TMP_C_FILE" -o "$OUTPUT_BINARY"
 
 echo "Compilation finished. Binary generated: $OUTPUT_BINARY"
+

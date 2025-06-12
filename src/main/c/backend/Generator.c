@@ -7,19 +7,18 @@
 #include <string.h>
 
 static Logger * _logger = NULL;
-FILE* _output_file = NULL;
-FunctionTableType functionTable = NULL;
+static FILE* _output_file = NULL;
+static FunctionTableType _function_table = NULL;
 
 void _initializeSucInTable();
 
-void initializeGeneratorModule() {
-    functionTable = createFunctionTable();
+void initializeGeneratorModule(CompilerState* compilerState) {
     _output_file = stdout;
 	_logger = createLogger("Generator");
 
     ArgumentListType sucArgs = createArgumentList();
     insertArgument(sucArgs, "x");
-    insertFunction(functionTable, "suc", sucArgs);
+    insertFunction(compilerState->functionTable, "suc", sucArgs);
     freeArgumentList(sucArgs);
 }
 
@@ -27,9 +26,6 @@ void shutdownGeneratorModule() {
 	if (_logger != NULL) {
 		destroyLogger(_logger);
 	}
-    if (functionTable != NULL) {
-        freeFunctionTable(functionTable);
-    }
 }
 
 void _preamble();
@@ -66,9 +62,24 @@ void _output(const char* const format, ...);
 
 void generateCode(CompilerState* compilerState){
     if (compilerState == NULL) return;
+    _function_table = compilerState->functionTable;
+
+    FILE* file = fopen(compilerState->outputFile, "w");
+    if (file == NULL) {
+        logError(_logger, "Could not open output file: %s", compilerState->outputFile);
+        compilerState->succeed = false;
+    }
+
+    _output_file = file;
 
     _preamble();
     compilerState->succeed = _generateProgram((Program*) compilerState->abstractSyntaxtTree);
+
+    if (!compilerState->succeed) {
+       remove(compilerState->outputFile); 
+    }
+
+    fclose(file);
 }
 
 void _preamble(){
@@ -143,13 +154,13 @@ int _generateDefinition(Definition* definition){
         insertArgument(argsList, arg->arg);
     }
 
-    if (!insertFunction(functionTable, definition->fun, argsList)) {
+    if (!insertFunction(_function_table, definition->fun, argsList)) {
         logError(_logger, "Error in function definition: could not create a function with name %s, make sure it's not already declared", definition->fun);
         freeArgumentList(argsList);
         return false;
     }
 
-    _output("int %s(", getFunNameForGeneratedCode(functionTable, definition->fun));
+    _output("int %s(", getFunNameForGeneratedCode(_function_table, definition->fun));
     if (!_generateFunctionArgs(definition->args)) {
         logError(_logger, "Invalid arguments error");
         freeArgumentList(argsList);
@@ -272,7 +283,7 @@ int _validBaseCaseArgs(ArgumentListType argsList, FunctionArgs* args) {
 }
 
 int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentListType argsList) {
-    if (baseCase == NULL || functionTable == NULL) return false;
+    if (baseCase == NULL || _function_table == NULL) return false;
     
     if (strcmp(baseCase->fun, functionName) != 0) {
         logError(_logger, "Error in base case: function name %s is not part of the definition", baseCase->fun);
@@ -289,7 +300,7 @@ int _generateBaseCase(BaseCase* baseCase, const char* functionName, ArgumentList
 }
 
 int _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList) {
-    if (nextCase == NULL || functionTable == NULL) return false;
+    if (nextCase == NULL || _function_table == NULL) return false;
 
     if (strcmp(nextCase->fun, functionName) != 0) {
         logError(_logger, "Error in next case: function name %s is not part of the definition", nextCase->fun);
@@ -319,7 +330,7 @@ int _generateEvaluation(Expression* expression) {
 }
 
 int _generateExpression(Expression* expression) {
-    if (expression == NULL || functionTable == NULL) return false;
+    if (expression == NULL || _function_table == NULL) return false;
 
     switch (expression->type) {
         case FACTOR:
@@ -396,19 +407,19 @@ int _getExpressionArgsLen(ExpressionArgs* expressionArgs) {
 }
 
 int _generateFunctionExpression(FunctionExpression* expression) {
-    if (expression == NULL || functionTable == NULL) return false;
+    if (expression == NULL || _function_table == NULL) return false;
 
-    if (!containsFunction(functionTable, expression->fun)) {
+    if (!containsFunction(_function_table, expression->fun)) {
         logError(_logger, "Error in expression: function %s is not defined", expression->fun);
         return false;
     }
 
-    if (_getExpressionArgsLen(expression->args) != getArgumentCount(functionTable, expression->fun)) {
+    if (_getExpressionArgsLen(expression->args) != getArgumentCount(_function_table, expression->fun)) {
         logError(_logger, "Error in arguments: wrong argument count passed to function");
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
+    _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
     int expressionArgsStatus = _generateExpressionArgs(expression->args);
     _output(")");
 
@@ -434,14 +445,14 @@ int _validExpressionArgsInDefinition(ExpressionArgs* args, ArgumentListType args
 }
 
 int _generateFunctionExpressionInDefinition(FunctionExpression* expression, const char* functionName, ArgumentListType argsList) {
-    if (expression == NULL || argsList == NULL || functionTable == NULL) return false;
+    if (expression == NULL || argsList == NULL || _function_table == NULL) return false;
 
-    if (!containsFunction(functionTable, expression->fun)) {
+    if (!containsFunction(_function_table, expression->fun)) {
         logError(_logger, "Error in expression: function %s is not defined", expression->fun);
         return false;
     }
 
-    if (_getExpressionArgsLen(expression->args) != getArgumentCount(functionTable, expression->fun)) {
+    if (_getExpressionArgsLen(expression->args) != getArgumentCount(_function_table, expression->fun)) {
         logError(_logger, "Error in arguments: wrong argument count passed to function");
         return false;
     }
@@ -451,14 +462,14 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, cons
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(functionTable,expression->fun));
+    _output("%s(", getFunNameForGeneratedCode(_function_table,expression->fun));
     int expressionArgsStatus = _generateExpressionArgsInDefinition(expression->args, functionName, argsList);
     _output(")");
     return expressionArgsStatus;
 }
 
 int _generateExpressionArgs(ExpressionArgs* expressionArgs) {
-    if (functionTable == NULL) return false;
+    if (_function_table == NULL) return false;
 
     for (ExpressionArgs* arg = expressionArgs; arg != NULL; arg = arg->expressionArgs) {
         if (!_generateExpression(arg->expression)) {
@@ -486,14 +497,14 @@ int _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, const ch
 }
 
 int _generateBinaryExpression(BinaryExpression* expression) {
-    if (expression == NULL || functionTable == NULL) return false;
+    if (expression == NULL || _function_table == NULL) return false;
 
-    if (!containsFunction(functionTable, expression->fun)) {
+    if (!containsFunction(_function_table, expression->fun)) {
         logError(_logger, "Error in binary expression: function %s is not defined", expression->fun);
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
+    _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
     int leftExpressionStatus = _generateExpression(expression->left);
     _output(",");
     int rightExpressionStatus = _generateExpression(expression->right);
@@ -503,14 +514,14 @@ int _generateBinaryExpression(BinaryExpression* expression) {
 }
 
 int _generateBinaryExpressionInDefinition(BinaryExpression* expression, const char* functionName, ArgumentListType argsList) {
-    if (expression == NULL || functionTable == NULL || argsList == NULL) return false;
+    if (expression == NULL || _function_table == NULL || argsList == NULL) return false;
 
-    if (!containsFunction(functionTable, expression->fun)) {
+    if (!containsFunction(_function_table, expression->fun)) {
         logError(_logger, "Error in binary expression: function %s is not defined", expression->fun);
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
+    _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
     int leftExpressionStatus = _generateExpressionInDefinition(expression->left, functionName, argsList);
     _output(",");
     int rightExpressionStatus = _generateExpressionInDefinition(expression->right, functionName, argsList);

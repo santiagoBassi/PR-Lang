@@ -2,6 +2,7 @@
 #define COMPILER_STATE_HEADER
 
 #include "Type.h"
+#include <stdio.h>
 
 /**
  * The general status of a compilation.
@@ -17,7 +18,11 @@ typedef enum {
  */
 typedef struct {
 	// The root node of the AST.
+    const char * inputFile;
+    const char * outputFile;
+
 	void * abstractSyntaxtTree;
+    void * functionTable;
 
 	// A flag that indicates the current state of the compilation so far.
 	boolean succeed;
