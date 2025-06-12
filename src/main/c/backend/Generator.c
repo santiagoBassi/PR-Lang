@@ -78,7 +78,7 @@ void _preamble(){
         "int out = 0; scanf(\"%%d\", &out);\n"
         "return (out < 0 ? 0 : out);\n"
         "}\n"
-        "int suc(int n){\n"
+        "int function0(int n){\n"
         "return n + 1;\n"
         "}\n"
     );
@@ -149,7 +149,7 @@ int _generateDefinition(Definition* definition){
         return false;
     }
 
-    _output("int %s(", definition->fun);
+    _output("int %s(", getFunNameForGeneratedCode(functionTable, definition->fun));
     if (!_generateFunctionArgs(definition->args)) {
         logError(_logger, "Invalid arguments error");
         freeArgumentList(argsList);
@@ -408,7 +408,7 @@ int _generateFunctionExpression(FunctionExpression* expression) {
         return false;
     }
 
-    _output("%s(", expression->fun);
+    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
     int expressionArgsStatus = _generateExpressionArgs(expression->args);
     _output(")");
 
@@ -451,7 +451,7 @@ int _generateFunctionExpressionInDefinition(FunctionExpression* expression, cons
         return false;
     }
 
-    _output("%s(", expression->fun);
+    _output("%s(", getFunNameForGeneratedCode(functionTable,expression->fun));
     int expressionArgsStatus = _generateExpressionArgsInDefinition(expression->args, functionName, argsList);
     _output(")");
     return expressionArgsStatus;
@@ -493,7 +493,7 @@ int _generateBinaryExpression(BinaryExpression* expression) {
         return false;
     }
 
-    _output("%s(", expression->fun);
+    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
     int leftExpressionStatus = _generateExpression(expression->left);
     _output(",");
     int rightExpressionStatus = _generateExpression(expression->right);
@@ -510,7 +510,7 @@ int _generateBinaryExpressionInDefinition(BinaryExpression* expression, const ch
         return false;
     }
 
-    _output("%s(", expression->fun);
+    _output("%s(", getFunNameForGeneratedCode(functionTable, expression->fun));
     int leftExpressionStatus = _generateExpressionInDefinition(expression->left, functionName, argsList);
     _output(",");
     int rightExpressionStatus = _generateExpressionInDefinition(expression->right, functionName, argsList);

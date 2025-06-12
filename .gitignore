@@ -9,12 +9,15 @@
 /log/
 /node_modules/
 /obj/
+/output
+
 
 # Files.
 .DS_Store
 .env*
 *.csproj.user
 *~
+/output/*
 
 # Application specific.
 /program

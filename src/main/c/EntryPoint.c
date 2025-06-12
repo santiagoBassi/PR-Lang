@@ -41,7 +41,7 @@ const int main(const int count, const char ** arguments) {
 	if (syntacticAnalysisStatus == ACCEPT) {
 		// ----------------------------------------------------------------------------------------
 		// Beginning of the Backend... ------------------------------------------------------------
-        logInformation(logger, "The syntactic-analysis phase accepts the input program.");
+        //logInformation(logger, "The syntactic-analysis phase accepts the input program.");
 		generateCode(&compilerState);
         compilationStatus = (compilerState.succeed? SUCCEED : FAILED);
 		// ...end of the Backend. -----------------------------------------------------------------

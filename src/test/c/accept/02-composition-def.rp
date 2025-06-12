@@ -1,2 +1,12 @@
+#include src/test/c/accept/01-eval-sum.rp
+
+def *(x, y):
+-> *(x, 0) = 0
+-> *(x, y + 1) = (*(x, y) + x)
+
 def pow2(x):
 => pow2(x) = *(x, x)
+
+
+pow2(3)
+pow2(4)

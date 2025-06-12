@@ -7,6 +7,7 @@ typedef struct FunctionTable {
 
 typedef struct FunctionTableRow {
     char * functionName;
+    char * funNameForGeneratedCode;
     int argumentCount;
 } FunctionTableRow;
 
@@ -16,6 +17,7 @@ void _freeFunctionTableRow(void *row) {
     FunctionTableRow *functionTableRow = (FunctionTableRow *)row;
     
     free(functionTableRow->functionName);
+    free(functionTableRow->funNameForGeneratedCode);
 }
 
 int _compareFunctionTableRows(const void *a, const void *b, void *udata) {
@@ -54,8 +56,17 @@ int insertFunction(FunctionTableType functionTable, const char * functionName, A
 
     row.functionName = calloc(strlen(functionName) + 1, sizeof(char));
     if (row.functionName == NULL) return false;
-
     strcpy((char *)row.functionName, functionName);
+
+   
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "function%ld", hashmap_count(functionTable->table));
+    row.funNameForGeneratedCode = calloc(strlen(buffer) + 1, sizeof(char));
+    if (row.funNameForGeneratedCode == NULL) {
+        free(row.functionName);
+        return false;
+    }
+    strcpy(row.funNameForGeneratedCode, buffer);
 
     row.argumentCount = getSize(argumentList);
 
@@ -93,3 +104,14 @@ void freeFunctionTable(FunctionTableType functionTable) {
     free(functionTable);
 }
 
+char * getFunNameForGeneratedCode(FunctionTableType functionTable, const char * functionName) {
+    if (functionTable == NULL || functionName == NULL) return NULL;
+
+    FunctionTableRow row;
+    row.functionName = (char *)functionName;
+
+    const FunctionTableRow * tableRow = hashmap_get(functionTable->table, &row);
+    if (tableRow == NULL) return NULL;
+
+    return tableRow->funNameForGeneratedCode;
+}

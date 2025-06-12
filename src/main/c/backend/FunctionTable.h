@@ -20,4 +20,6 @@ int getArgumentCount(FunctionTableType functionTable, const char * functionName)
 
 void freeFunctionTable(FunctionTableType functionTable);
 
+char * getFunNameForGeneratedCode(FunctionTableType functionTable, const char * functionName);
+
 #endif
