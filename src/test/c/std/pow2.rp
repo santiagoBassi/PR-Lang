@@ -1,7 +1,4 @@
 #include src/test/c/std/times.rp
 
 def pow2(x):
-=> pow2(x) = *(x, x)
-
-pow2(3)
-pow2(4)
+=> pow2(x) = (x * x)

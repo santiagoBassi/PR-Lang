@@ -1,1 +1,3 @@
+#include src/test/c/std/times.rp
+
 (5 * 4)

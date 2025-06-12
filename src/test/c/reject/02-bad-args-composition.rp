@@ -1,2 +1,4 @@
+#include src/test/c/std/times.rp
+
 def pow2(x y):
 => pow2(x) = *(x, x)

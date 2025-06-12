@@ -1,2 +1,4 @@
+#include src/test/c/std/times.rp
+
 def pow3(x):
 => pow3(x) = (x * (x * x))

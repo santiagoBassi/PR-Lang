@@ -1,3 +1,5 @@
+#include src/test/c/std/sum.rp
+
 // This is to test new lines after comments
 
 +(5, 6)

@@ -1,0 +1,5 @@
+#include src/test/c/std/sum.rp
+
+def *(x, y):
+-> *(x, 0) = 0
+-> *(x, y + 1) = (*(x, y) + x)

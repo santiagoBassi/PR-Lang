@@ -1,3 +1,5 @@
+#include src/test/c/std/times.rp
+
 def superFun(n):
 -> superFun(0) = 1
 -> superFun(n + 1) = (suc(n) * superFun(n))
