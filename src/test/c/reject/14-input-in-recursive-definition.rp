@@ -1,0 +1,7 @@
+#include src/test/c/std/times.rp
+
+def input_mult(n):
+-> input_mult(0) = 1
+-> input_mult(n + 1) = (input * input_mult(n))
+
+input_mult(3)

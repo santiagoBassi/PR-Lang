@@ -1,0 +1,6 @@
+#include src/test/c/std/times.rp
+
+def x():
+-> x=input
+
+x()

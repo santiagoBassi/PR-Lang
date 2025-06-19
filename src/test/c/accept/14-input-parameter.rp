@@ -1,0 +1,3 @@
+#include src/test/c/std/times.rp
+
+(input * 2)
