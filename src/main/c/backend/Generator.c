@@ -46,11 +46,11 @@ boolean _generateBaseCase(BaseCase* baseCase, const char* functionName, Argument
 boolean _generateNextCase(NextCase* nextCase, const char* functionName, ArgumentListType argsList);
 
 boolean _generateEvaluation(Expression* expression);
-boolean _generateExpression(Expression* expression);
-boolean _generateFunctionExpression(FunctionExpression* functionExpression);
-boolean _generateBinaryExpression(BinaryExpression* binaryExpression);
-boolean _generateFactor(Factor* factor);
-boolean _generateExpressionArgs(ExpressionArgs* expressionArgs);
+boolean _generateExpression(Expression* expression, boolean isSemanticRepresentation);
+boolean _generateFunctionExpression(FunctionExpression* functionExpression, boolean isSemanticRepresentation);
+boolean _generateBinaryExpression(BinaryExpression* binaryExpression, boolean isSemanticRepresentation);
+boolean _generateFactor(Factor* factor, boolean isSemanticRepresentation);
+boolean _generateExpressionArgs(ExpressionArgs* expressionArgs, boolean isSemanticRepresentation);
 
 boolean _generateExpressionInDefinition(Expression* expression, const char* functionName, ArgumentListType argsList);
 boolean _generateFunctionExpressionInDefinition(FunctionExpression* functionExpression, const char* functionName, ArgumentListType argsList);
@@ -329,25 +329,35 @@ boolean _generateNextCase(NextCase* nextCase, const char* functionName, Argument
 }
 
 boolean _generateEvaluation(Expression* expression) {
-    _output("printf(\"%%d\\n\", ");
-    if (!_generateExpression(expression)) {
+    _output("printf(\"");
+
+    if(!_generateExpression(expression, false)) {
         logError(_logger, "Error during evaluation");
         return false;
     }
+
+    _output(" = %%d\\n\", ");
+
+    if (!_generateExpression(expression, true)) {
+        logError(_logger, "Error during evaluation");
+        return false;
+    }
+
     _output(");\n");
+
     return true;
 }
 
-boolean _generateExpression(Expression* expression) {
+boolean _generateExpression(Expression* expression, boolean isSemanticRepresentation) {
     if (expression == NULL || _function_table == NULL) return false;
 
     switch (expression->type) {
         case FACTOR:
-            return _generateFactor(expression->factor);
+            return _generateFactor(expression->factor, isSemanticRepresentation);
         case FUNCTION:
-            return _generateFunctionExpression(expression->functionExpression);
+            return _generateFunctionExpression(expression->functionExpression, isSemanticRepresentation);
         case BINARY:
-            return _generateBinaryExpression(expression->binaryExpression);
+            return _generateBinaryExpression(expression->binaryExpression, isSemanticRepresentation);
         default:
             logError(_logger, "Unknown expression type: %d", expression->type);
             return false;
@@ -370,7 +380,7 @@ boolean _generateExpressionInDefinition(Expression* expression, const char* func
     }
 }
 
-boolean _generateFactor(Factor* factor) {
+boolean _generateFactor(Factor* factor, boolean isSemanticRepresentation) {
     if (factor == NULL) return false;
 
     switch (factor->type) {
@@ -378,10 +388,14 @@ boolean _generateFactor(Factor* factor) {
             logError(_logger, "Error in factor: can't use symbols in evaluations");
             return false;
         case NUM:
-            _output(" %d ", factor->num);
+            _output("%d", factor->num);
             return true;
         case INPUT_TYPE:
-            _output(" get_positive_integer_from_stdin() ");
+            if (isSemanticRepresentation) {
+                _output("get_positive_integer_from_stdin()");
+            } else {
+                _output("input");
+            }
             return true;
         default:
             logError(_logger, "Unknown factor type: %d", factor->type);
@@ -415,7 +429,7 @@ int _getExpressionArgsLen(ExpressionArgs* expressionArgs) {
     return 1 + _getExpressionArgsLen(expressionArgs->expressionArgs);
 }
 
-boolean _generateFunctionExpression(FunctionExpression* expression) {
+boolean _generateFunctionExpression(FunctionExpression* expression, boolean isSemanticRepresentation) {
     if (expression == NULL || _function_table == NULL) return false;
 
     if (!containsFunction(_function_table, expression->fun)) {
@@ -428,8 +442,13 @@ boolean _generateFunctionExpression(FunctionExpression* expression) {
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
-    boolean expressionArgsStatus = _generateExpressionArgs(expression->args);
+    if (isSemanticRepresentation) {
+        _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
+    } else {
+        _output("%s(", expression->fun);
+    }
+
+    boolean expressionArgsStatus = _generateExpressionArgs(expression->args, isSemanticRepresentation);
     _output(")");
 
     return expressionArgsStatus;
@@ -477,11 +496,11 @@ boolean _generateFunctionExpressionInDefinition(FunctionExpression* expression, 
     return expressionArgsStatus;
 }
 
-boolean _generateExpressionArgs(ExpressionArgs* expressionArgs) {
+boolean _generateExpressionArgs(ExpressionArgs* expressionArgs, boolean isSemanticRepresentation) {
     if (_function_table == NULL) return false;
 
     for (ExpressionArgs* arg = expressionArgs; arg != NULL; arg = arg->expressionArgs) {
-        if (!_generateExpression(arg->expression)) {
+        if (!_generateExpression(arg->expression, isSemanticRepresentation)) {
             logError(_logger, "Error in expression arguments");
             return false;
         }
@@ -505,7 +524,7 @@ boolean _generateExpressionArgsInDefinition(ExpressionArgs* expressionArgs, cons
     return true;
 }
 
-boolean _generateBinaryExpression(BinaryExpression* expression) {
+boolean _generateBinaryExpression(BinaryExpression* expression, boolean isSemanticRepresentation) {
     if (expression == NULL || _function_table == NULL) return false;
 
     if (!containsFunction(_function_table, expression->fun)) {
@@ -513,10 +532,15 @@ boolean _generateBinaryExpression(BinaryExpression* expression) {
         return false;
     }
 
-    _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
-    boolean leftExpressionStatus = _generateExpression(expression->left);
+    if (isSemanticRepresentation) {
+        _output("%s(", getFunNameForGeneratedCode(_function_table, expression->fun));
+    } else {
+        _output("%s(", expression->fun);
+    }
+
+    boolean leftExpressionStatus = _generateExpression(expression->left, isSemanticRepresentation);
     _output(",");
-    boolean rightExpressionStatus = _generateExpression(expression->right);
+    boolean rightExpressionStatus = _generateExpression(expression->right, isSemanticRepresentation);
     _output(")");
 
     return leftExpressionStatus && rightExpressionStatus;
