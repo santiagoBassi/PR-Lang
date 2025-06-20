@@ -217,7 +217,15 @@ A lo largo del desarrollo del compilador se presentaron diversas dificultades t�
 
 \section {Futuras Extensiones}
 
+Dado que implementamos con éxito las funcionalidades necesarias para construir cualquier función RP, cualquier aumento de scope del proyecto iría más allá de su intención original. Se podría plantear la posibilidad de llamar desde un programa a funciones definidas por fuera del lenguaje, permitiendo aumentar el grupo de funciones definibles a la clausura de estas funciones externas junto a las operaciones RP.
+
 \section {Conclusiones}
+
+El desarrollo de RP-Lang permitió explorar de forma concreta y práctica un concepto central de la teoría de la computación: las funciones recursivas primitivas. El proyecto cumplió con éxito su objetivo de ofrecer una herramienta capaz de definir y evaluar este tipo de funciones, traduciendo programas RP-Lang a código C de manera fiel al modelo teórico.
+
+A lo largo del trabajo se enfrentaron desafíos relevantes en el diseño del lenguaje y en la implementación del compilador, los cuales fueron resueltos mediante decisiones técnicas bien fundamentadas, como la diferenciación sintáctica entre esquemas recursivos y compositivos o la reestructuración del AST para facilitar la generación de código.
+
+Si bien el lenguaje no está optimizado en términos de eficiencia, esto es coherente con su propósito educativo y teórico. RP-Lang constituye una base sólida para futuras extensiones que podrían ampliar su expresividad, como la integración de funciones externas, sin perder su esencia centrada en las funciones RP.
 
 \section {Referencias}
 
