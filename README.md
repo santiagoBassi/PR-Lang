@@ -8,6 +8,25 @@ RP-Lang is a programming language that can be used to define and evaluate primit
 def ^(x, y):
 -> ^(x, 0) = 1
 -> ^(x, y + 1) = *(x, ^(x, y))
+
+^(2, 3)
+```
+
+## Running the compiler
+
+The compiler can be built using the `build.sh` script.
+
+The generated binary expects an input and output file as parameters. It can be run is the following ways.
+
+```
+./build/Compiler in_file out_file
+./script/ubuntu/start.sh in_file out_file
+```
+
+If you have `gcc` installed you can use the `generate-binary.sh` script to also generate a binary.
+
+```
+./script/ubuntu/generate-binary.sh in_file
 ```
 
 ## Environment
