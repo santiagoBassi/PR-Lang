@@ -1,0 +1,52 @@
+// Predecessor function, pred(x) = max(0, x-1)
+def pred(x):
+-> pred(0) = 0
+-> pred(x + 1) = x
+
+// Addition operator, +(x, y) = x + y
+def +(x, y):
+-> +(x, 0) = x
+-> +(x, y + 1) = suc(+(x, y))
+
+// Truncated subtraction operator, -(x, y) = max(0, x-y)
+def -(x, y):
+-> -(x, 0) = x
+-> -(x, y + 1) = pred(-(x, y))
+
+// Multiplication operator, *(x, y) = x * y
+def *(x, y):
+-> *(x, 0) = 0
+-> *(x, y + 1) = (*(x, y) + x)
+
+// Not function, not(x) = { 1 if x = 0 : 0 if x > 0 }
+def not(x):
+-> not(0) = 1
+-> not(x + 1) = 0
+
+// And operator, &&(x, y) = { 1 if x>0 and y>0 : 0 if x=0 or y=0 }
+def &&(x, y):
+=> &&(x, y) = (x * y)
+
+// Or operator, ||(x, y) = { 1 if x>0 or y>0 : 0 if x=0 and y=0 }
+def ||(x, y):
+=> ||(x, y) = (x + y)
+
+// IsZero predicate, equivalent to the Not function
+def IsZero(x):
+=> IsZero(x) = not(x)
+
+// Less than or equals predicate, <=(x, y) = { 1 if x<=y : 0 if x>y }
+def <=(x, y):
+=> <=(x, y) = not(x - y)
+
+// Greater than or equals predicate, >=(x,y) = { 1 if x>=y : 0 if x<y }
+def >=(x, y):
+=> >=(x, y) = (y <= x)
+
+// Equals predicate, ==(x, y) = { 1 if x=y : 0 if x!=y }
+def ==(x, y):
+=> ==(x, y) = ((x >= y) && (x <= y))
+
+// Not equals predicate, !=(x, y) = { 1 if x!=y : 0 if x=y }
+def !=(x, y):
+=> !=(x, y) = not(x == y)
