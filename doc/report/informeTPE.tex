@@ -169,39 +169,44 @@ Una vez que todas las validaciones han sido superadas, se genera el código C co
 A continuación se muestra la estructura del código C generado por el compilador de \rplang{} dado un programa válido de entrada.
 
 \begin{verbatim}
-#include<stdio.h>
+//preamble
+#include <stdio.h>
+#include <stdlib.h>
 
 int get_positive_integer_from_stdin(){
-int out = 0; scanf("%d", &out);
-return (out < 0 ? 0 : out);
+    static int input_counter = 1;
+    printf("Enter integer for program to use as %d%s input: ", input_counter,
+    input_counter == 1 ? "st" : input_counter == 2 ? "nd" : input_counter == 3 ? "rd" : "th");
+    input_counter++;int out = 0;
+    int invalid = scanf("%d", &out);
+    if (invalid != 1) {printf("Invalid non input integer, ending program\n"); exit(1);}
+    return out;
 }
 
-int suc(int n){
-return n+1;
+int function0(int n){
+    return n + 1;
 }
 
 // definitions go here
 
 // example definition
-int fun1(int x, int y){
-if (y == 0) {
-return x ;
-}
-
-y--;
-
-return suc(fun1( x , y ));
+int function1(int x,int y){
+    if (y == 0) {
+    	return x ;
+    }
+    
+    y--;
+    
+    return function0(function1( x , y ));
 }
 
 int main() {
-//evaluations go here
-
-//example evaluation. Evaluations are printed
-printf("%d", fun1( 5 , 2 ));
-
-return 0;
+    //evaluations go here
+    
+    //example evaluation. Evaluations are printed
+    printf("+(5,2) = %d\n", function1(5,2));
+    return 0;
 }
-
 \end{verbatim}
 
 Cabe destacar que, debido a la naturaleza de las funciones recursivas primitivas, el código generado no es eficiente desde el punto de vista computacional. Por ejemplo, para calcular $x + y$ se requiere realizar $y$ llamadas recursivas, replicando la definición formal de la suma como función RP. Esto va a ser general para todas las funciones RP, si $f:\mathbb N^k\to\mathbb N$ tal que $f(x_1,\cdots,x_k)$, requiere realizar $x_k$ llamadas recursivas. Esta ineficiencia es inherente al modelo teórico que el lenguaje busca representar. Aunque algunas de estas funciones podrían implementarse de forma iterativa para mejorar el rendimiento, ese no es el objetivo de \rplang{}, que prioriza la fidelidad al modelo matemático por sobre la eficiencia.
@@ -225,7 +230,7 @@ El desarrollo de RP-Lang permitió explorar de forma concreta y práctica un con
 
 A lo largo del trabajo se enfrentaron desafíos relevantes en el diseño del lenguaje y en la implementación del compilador, los cuales fueron resueltos mediante decisiones técnicas bien fundamentadas, como la diferenciación sintáctica entre esquemas recursivos y compositivos o la reestructuración del AST para facilitar la generación de código.
 
-Si bien el lenguaje no está optimizado en términos de eficiencia, esto es coherente con su propósito educativo y teórico. RP-Lang constituye una base sólida para futuras extensiones que podrían ampliar su expresividad, como la integración de funciones externas, sin perder su esencia centrada en las funciones RP.
+Si bien el lenguaje no está optimizado en términos de eficiencia, esto es coherente con su propósito educativo y teórico. RP-Lang constituye una base sólida para futuras extensiones que podrían ampliar su expresividad, como la integración de funciones externas, sin perder su esencia centrada en las funciones RP.
 
 \section {Referencias}
 
